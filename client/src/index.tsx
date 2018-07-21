@@ -1,11 +1,14 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
-import './index.css';
-import registerServiceWorker from './registerServiceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root') as HTMLElement
-);
-registerServiceWorker();
+import {} from 'redux'
+import {} from 'react-redux'
+
+import App from "./App"
+
+const root = document.getElementById("root")
+
+root&&
+  ReactDOM.render(<App/>, root)
+
+if(!root) throw new Error("Root element not found!")

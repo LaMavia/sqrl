@@ -1,0 +1,6 @@
+jsxBracketSameLine: true
+parser: typescript
+singleQuote: true
+bracketSpacing: true
+jsxBracketSameLine: true
+arrowParens: avoid
