@@ -10,7 +10,7 @@ module.exports = {
 	mode: "development",
 	entry: "./client/src/index.tsx",
 	output: {
-		path: fromRoot("client/dist"),
+		path: fromRoot("client/assets/js/"),
 		filename: "bundle.js",
 		publicPath: fromRoot("client/assets/")
 	},
@@ -28,10 +28,10 @@ module.exports = {
 			}
 		]
 	},
-	externals: {
-		react: "React",
-		"react-dom": "ReactDOM"
-	},
+	// externals: {
+	// 	react: "React",
+	// 	"react-dom": "ReactDOM"
+	// },
 	devServer: {
     proxy: { // proxy URLs to backend development server
       '/api': 'http://localhost:3000'

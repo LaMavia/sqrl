@@ -1,27 +1,45 @@
 import {
 	IsString,
-	IsInstance,
 	IsUrl,
-	IsArray,
-	ValidateNested
+	IsMongoId,
+	IsEmail
 } from "class-validator"
-import { Post } from "./post.dto"
+import mongoose from 'mongoose'
 
-export class Name {
-	@IsString() readonly First: string
-	@IsString() readonly Last: string
-
-	constructor(First: string, Last: string) {
-		this.First = First
-		this.Last = Last
-	}
-}
+// export class Name {
+// 	@IsString() readonly First: string
+// 	@IsString() readonly Last: string
+// 
+// 	constructor(First: string, Last: string) {
+// 		this.First = First
+// 		this.Last = Last
+// 	}
+// }
 
 export class User {
-	@IsInstance(Name) readonly Name: Name
+	@IsString() readonly Name: string
 	@IsString() readonly Username: string
+	@IsString() readonly Password: string
+	@IsEmail() readonly Email: string
 	@IsUrl() readonly ProfileImageURL: string
 	@IsUrl() readonly BackgroundImageURL: string
-	@ValidateNested({ each: true })
-    readonly Posts: Post[]
+	@IsMongoId({each: true}) readonly Followers: mongoose.Schema.Types.ObjectId[]
+
+	constructor(
+		Name: string,
+		Username: string,
+		Password: string,
+		Email: string,
+		ProfileImageURL: string,
+		BackgroundImageURL: string,
+		Followers: mongoose.Schema.Types.ObjectId[]
+	) {
+		this.Name = Name
+		this.Username = Username
+		this.Password = Password 
+		this.Email = Email
+		this.ProfileImageURL = ProfileImageURL
+		this.BackgroundImageURL = BackgroundImageURL
+		this.Followers = Followers
+	}
 }

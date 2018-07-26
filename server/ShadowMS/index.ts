@@ -1,10 +1,11 @@
 import mongoose from "mongoose"
 import express, { NextFunction } from "express"
-import * as dotenv from "dotenv"
+import { ApolloServer, mergeSchemas } from "apollo-server-express"
+import { GraphQLSchema } from "graphql"
+// import { makeExecutableSchema } from "graphql-tools"
 import * as path from "path"
 
 import iShadow from "./types/basic" 
-
 /**
  * @todo Add CMS routes \w handlers
 */
@@ -17,6 +18,7 @@ export default class Shadow {
 	dbModels: iShadow.Models<any>
 	middleware: express.RequestHandler[]
 	app: express.Express
+	apollo: ApolloServer
 	routes: iShadow.Route[]
 	APIRoutes: iShadow.APIRoute[]
 	CatchHandler: iShadow.CatchHandler
@@ -24,19 +26,20 @@ export default class Shadow {
 	_env: string
 
 	constructor(
-		port: number, 
 		dbConnection: mongoose.Connection, 
 		dbSchemas: iShadow.Schema[], 
 		middleware: express.RequestHandler[], 
 		routes: iShadow.Route[], 
 		APIRoutes: iShadow.APIRoute[],
-		CatchHandler: iShadow.CatchHandler
+		CatchHandler: iShadow.CatchHandler,
+		graphqlSchemas: GraphQLSchema[],
+		graphqlResolvers: iShadow.ResolverConstruct<any, any>[]
 	) {
 		this.db = dbConnection
 		this.dbSchemas = dbSchemas
 		this.dbModels = {}
 
-		this.port = port
+		this.port = Number(process.env["PORT"])
 		this.middleware = middleware
 		this.routes = routes
 		this.APIRoutes = APIRoutes
@@ -47,15 +50,26 @@ export default class Shadow {
 
 		this.app = express()
 
+		// @ts-ignore
+		const schema: GraphQLSchema = mergeSchemas({
+			schemas: graphqlSchemas,
+			resolvers: graphqlResolvers
+				.map(constr => constr(this))
+				.reduce((acc, x) => ({
+					Mutation: Object.assign({}, acc.Mutation, x.Mutation),
+					Query: Object.assign({}, acc.Query, x.Query)
+				}), {Query: {}, Mutation: {}})
+		})
+
+		this.apollo = new ApolloServer({
+			schema
+		})
+		this.apollo.applyMiddleware({ app: this.app })
+
 		this.app.on("update", this.UpdateData.bind(this))
 
-		if(this._env === "production") 
-			dotenv.config()
-		else 
-			dotenv.config({path: "../../dev.env"}) 
-
 		this.CreateServer(
-			Number(process.env["PORT"]), 
+			this.port, 
 			process.env["HOST"] as string
 		)
 
@@ -63,9 +77,19 @@ export default class Shadow {
 	}
 
 	private InitMiddleware() {
-		this.middleware.forEach(( mdw: express.RequestHandler ) => {
+		this.middleware.forEach(mdlw => this.app.use(mdlw))
+		/*
+		function* gen(middleware: RequestHandler[]): IterableIterator<RequestHandler> {
+			for(const mdw of middleware) {
+				yield mdw
+			}
+		}
+
+		for (const mdw of gen(this.middleware)) {
 			this.app.use(mdw)
-		})
+		}
+		*/
+
 	}
 
 	private InitRoutes() {
@@ -91,24 +115,37 @@ export default class Shadow {
 	private InitModels() {
 		this.dbSchemas.forEach(
 			(schema: iShadow.Schema) => {
-				this.dbModels[schema.name] = 
-					this.db.model(schema.name, schema.schema, schema.collection)
+				const newModel = this.db.model(schema.name, schema.schema, schema.collection)
+
+				this.dbModels[schema.name] = newModel
+				/*new Proxy(newModel, {
+					get(target, propKey, _receiver) {
+						if(target && propKey !== "Query") {
+							// @ts-ignore
+							const calledMethod = target[propKey]
+							return !(String(propKey) && /find/g.test(String(propKey)) && target)
+								? calledMethod
+								: (...args: any[]) => {
+									// console.dir(args, { colors: true })
+									const res = calledMethod.call(target, ...args)
+									debugger
+									return res
+								}
+						}
+						return () => {}
+					}
+				})*/
 			}, this
 		)
 	}
 
 	private InitErrorHandler() {
-		this.app.use((err: any | Error, req: any, res: any, _next: NextFunction) => {
-			// set locals, only providing error in development
-			res.locals.message = err.message
-			res.locals.error = 
-				req.app.get("env") === "development" 
-					? err 
-					: {}
-		
-			// render the error page
-			res.status(err.status || 500)
-			res.render("error")
+		this.app.use((err: any | Error, _req: any, res: any, _next: NextFunction) => {
+			debugger
+			if(!res.headersSent){
+				res.status(500)
+				res.render('error', { error: err })
+			}
 		})
 	}
 
@@ -144,24 +181,62 @@ export default class Shadow {
 	}
 
 	// DataBase Methods
-	async GetFromDB(modelName: string, conditions: iShadow.LooseObject = {}) {
+	async GetFromDB(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
 		let out: any[] = []
-		await this.dbModels[modelName].find(conditions)
-			.then ( d   => out = d )
+		await this.dbModels[modelName].find(conditions).limit(limit)
+			.then( d => out = d )
+			/**
+			 * @description Caching responses from the Database in their corresponding this.data[ModelName]
+			 */
+			.then( res => {	
+				if(Array.isArray(res)) {
+					for(const item of res) {
+						if(this.data[modelName].some((x: any) => String(x._id) === item._id)) {
+							this.data[modelName].push(item)
+						}
+					}
+				} else if(res) {
+					if(this.data[modelName].some((x: any) => String(x._id) === (res as any)._id)) {
+						this.data[modelName].push(res)
+					}
+				}
+			})
 			.catch( err => new Error(err) )
 		return out
+	}
+
+	async AddToDB<ModelSchema>(
+		modelName: string,
+		modelArguments: ModelSchema
+	) {
+		const model = this.dbModels[modelName]
+		if (!model) {
+			throw new Error(`Model: ${modelName} not found!`)
+		}
+		const response = await model.create(modelArguments)
+			.then(doc => {
+				this.app.emit("update", modelName)
+				return doc
+			})
+			.catch(err => {throw new Error(err)})
+
+		return response
 	}
 
 	async UpdateDB(
 		modelName: string, 
 		query: iShadow.LooseObject, 
 		data: iShadow.LooseObject, 
-		options: mongoose.ModelUpdateOptions
+		options: mongoose.ModelUpdateOptions = {}
 	) {
 		let output: any
 		await this.dbModels[modelName].update(query, data, options)
-			.then(res => output = res)
-			.catch(err => output = err)
+			.then(res => {
+				return output = res
+			})
+			.catch(err => {
+				return output = err
+			})
 		return output
 	}
 
@@ -171,12 +246,12 @@ export default class Shadow {
 		single: boolean
 	)	{
 		let output
-		let operation: () => mongoose.Query<any>
-		if(single) 
-			operation = this.dbModels[modelName].deleteOne.bind(this, query)
-		else 			 
-			operation = this.dbModels[modelName].deleteMany.bind(this, query)
-		await operation()
+		const collection = this.dbModels[modelName].collection
+		if(!collection) throw new Error(`Collection ${collection} not found`)
+
+		await collection.remove(query, {
+				single
+			})
 			.then(res => output = res)
 			.catch(err => output = err)
 		return output
@@ -209,9 +284,13 @@ export default class Shadow {
 			}, this)
 		} else { // Updates everything
 			for(const modelName in this.dbModels) {
-				await this.dbModels[modelName].find()
+				try {
+					await this.dbModels[modelName].find()
 					.then(res => this.data[modelName] = res)
 					.catch(this.CatchHandler)
+				} catch(err) {
+					console.error(new Error(err))
+				}
 			}
 		} 
 	}	

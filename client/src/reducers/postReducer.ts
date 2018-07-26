@@ -8,11 +8,15 @@ import {
 	GET_POSTS
 } from "../actions/postActions"
 
+import { Post } from "../dtos/post.dto"
 
-export function postReducer(state: LooseObject = {}, action: PostAction) {
+export async function postReducer(state: Post[], action: PostAction) {
 	switch (action.type) {
 		case GET_POST:
-			return Object.assign({}, state, {})
+      return [
+        ...state,
+        await fetch(`${location.origin}`)
+      ]
 
 		default:
 			return state

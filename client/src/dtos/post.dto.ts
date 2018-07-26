@@ -1,26 +1,52 @@
-import {
-  IsDate,
-  IsString,
-  IsUrl,
-  IsInt,
-  IsMongoId,
-  IsInstance
-} from 'class-validator'
-import mongoose from 'mongoose'
-import { User } from "./user.dto"
+import { IsDate, IsString, IsInt, IsMongoId, IsBoolean } from "class-validator"
+import mongoose from "mongoose"
 
 export class Comment {
-  @IsInstance(User) readonly Author: User
-  @IsDate() readonly Date: string
-  @IsString() readonly Content: string
+	@IsMongoId() readonly _id: mongoose.Types.ObjectId
+	@IsMongoId() readonly Author: mongoose.Types.ObjectId
+	@IsDate() readonly Date: string
+	@IsString() readonly Content: string
+  @IsMongoId() readonly Post: mongoose.Types.ObjectId
+  
+  constructor(
+    _id: mongoose.Types.ObjectId,
+    Author: mongoose.Types.ObjectId,
+    Date: string,
+    Content: string,
+    Post: mongoose.Types.ObjectId,
+  ) {
+    this._id = _id
+    this.Author = Author
+    this.Date = Date
+    this.Content = Content
+    this.Post = Post
+  }	
 }
 
 export class Post {
-  @IsMongoId() readonly _id: mongoose.Types.ObjectId
-  @IsString() readonly Author: string
-  @IsString() readonly Date: string
-  @IsString() readonly Content: string
-  @IsString() readonly ImageURL?: string
-  @IsInt() readonly Likes: number
-  readonly Comments: Comment[]
+	@IsMongoId() readonly _id: mongoose.Types.ObjectId
+	@IsMongoId() readonly Author: mongoose.Types.ObjectId
+	@IsString()  readonly Date: string
+	@IsString()  readonly Content: string
+	@IsInt()     readonly Likes: number
+	@IsBoolean() readonly Edited: boolean
+	@IsString()  readonly ImageURL?: string
+
+	constructor(
+		_id: mongoose.Types.ObjectId,
+		Author: mongoose.Types.ObjectId,
+		Date: string,
+		Content: string,
+		Likes: number,
+		Edited: boolean,
+		ImageURL?: string
+	) {
+		this._id = _id
+		this.Author = Author
+		this.Date = Date
+		this.Content = Content
+		this.Likes = Likes
+		this.Edited = Edited
+		this.ImageURL = ImageURL
+	}
 }
