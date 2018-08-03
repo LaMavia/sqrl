@@ -23,7 +23,7 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
   typeDefs: gql`
     type Query {
       Post(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean): Post
-      Posts(Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean): [Post]
+      Posts(Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean, Limit: Int): [Post]
       AllPosts: [Post]
     }
 
@@ -57,7 +57,9 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
       return prepare(res[0]) || null
     },
     Posts: async (_root, args) => {
-      const res = await Shadow.GetFromDB("Post", args)
+      const { Limit } = args
+      delete args.Limit
+      const res = await Shadow.GetFromDB("Post", args, Limit)
       return res.map(prepare)
     },
     AllPosts: async (_root) => {

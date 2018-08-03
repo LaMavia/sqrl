@@ -70,10 +70,10 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 	Mutation: {
 		commentAdd: async (_root, { Author, Content, Post }) => {debugger
 			const res = await Shadow.AddToDB("Comment", {
-				Author,
+				Author: mongoose.Types.ObjectId(Author),
 				Date: new Date().toDateString(),
 				Content,
-				Post
+				Post: mongoose.Types.ObjectId(Post)
 			})
 
 			return res
@@ -81,7 +81,7 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 		commentDelete: async (_root, args) => {debugger
 			if (isNullOrUndefined(args) || Object.keys(args).length <= 0) {
 				throw new Error(
-					"No conditions specified in userDelete. Prevented deleting all users."
+					"No conditions specified in commentDelete. Prevented deleting all comments."
 				)
 			}
 			if (args._id) args._id = mongoose.Types.ObjectId(args._id)

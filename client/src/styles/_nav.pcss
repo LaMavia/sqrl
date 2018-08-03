@@ -1,0 +1,39 @@
+:root {
+  --nav-w: 60px;
+  --nav-item-s: calc(var(--nav-w) / 2);
+}
+
+.nav {
+  width: var(--nav-w);
+  height: 100vh;
+  background-color: #2B2B2B;
+
+  &__items {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: space-around;
+
+    &__item {
+      width: var(--nav-item-s);
+      height: var(--nav-item-s);
+      overflow: hidden;
+      margin: 32px auto 0 auto;
+      cursor: pointer;
+
+      &:first-of-type {
+        margin-top: calc((var(--nav-w) - var(--nav-item-s)) / 1.5);
+      }
+
+      &__btn {
+        background-color: transparent; 
+        border: none;
+        cursor: pointer;
+      }
+
+      &__icon, &__link, &__btn {
+        width: var(--nav-item-s);
+        fill: #fefefe;
+      }
+    }
+  }
+}

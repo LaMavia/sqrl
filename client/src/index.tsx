@@ -1,14 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react"
+import ReactDOM from "react-dom"
+import { Provider } from "react-redux"
 
-import {} from 'redux'
-import {} from 'react-redux'
-
+import {store} from "./store"
 import App from "./App"
 
 const root = document.getElementById("root")
 
-root&&
-  ReactDOM.render(<App/>, root)
+root && ReactDOM.render((
+  <Provider store={store}>
+    <App />
+  </Provider>
+), root)
 
-if(!root) throw new Error("Root element not found!")
+if (!root) throw new Error("Root element not found!")

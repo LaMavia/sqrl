@@ -49,7 +49,19 @@ export default class Shadow {
 		this.CatchHandler = CatchHandler
 
 		this.app = express()
+		this.apollo = this.InitApollo(graphqlSchemas, graphqlResolvers)
 
+		this.app.on("update", this.UpdateData.bind(this))
+
+		this.CreateServer(
+			this.port, 
+			process.env["HOST"] as string
+		)
+
+		this.Init()
+	}
+
+	private InitApollo(graphqlSchemas: GraphQLSchema[], graphqlResolvers: iShadow.ResolverConstruct<any, any>[]) {
 		// @ts-ignore
 		const schema: GraphQLSchema = mergeSchemas({
 			schemas: graphqlSchemas,
@@ -61,19 +73,11 @@ export default class Shadow {
 				}), {Query: {}, Mutation: {}})
 		})
 
-		this.apollo = new ApolloServer({
+		const apollo = new ApolloServer({
 			schema
 		})
-		this.apollo.applyMiddleware({ app: this.app })
-
-		this.app.on("update", this.UpdateData.bind(this))
-
-		this.CreateServer(
-			this.port, 
-			process.env["HOST"] as string
-		)
-
-		this.Init()
+		apollo.applyMiddleware({ app: this.app })
+		return apollo
 	}
 
 	private InitMiddleware() {
@@ -141,7 +145,6 @@ export default class Shadow {
 
 	private InitErrorHandler() {
 		this.app.use((err: any | Error, _req: any, res: any, _next: NextFunction) => {
-			debugger
 			if(!res.headersSent){
 				res.status(500)
 				res.render('error', { error: err })
@@ -215,7 +218,8 @@ export default class Shadow {
 		}
 		const response = await model.create(modelArguments)
 			.then(doc => {
-				this.app.emit("update", modelName)
+				// this.app.emit("update", modelName)
+				this.data[modelName].push(doc)
 				return doc
 			})
 			.catch(err => {throw new Error(err)})
@@ -231,12 +235,9 @@ export default class Shadow {
 	) {
 		let output: any
 		await this.dbModels[modelName].update(query, data, options)
-			.then(res => {
-				return output = res
-			})
-			.catch(err => {
-				return output = err
-			})
+			.then(res => output = res)
+			.then(_ => this.app.emit("update", modelName))
+			.catch(err => output = err)
 		return output
 	}
 
@@ -246,13 +247,14 @@ export default class Shadow {
 		single: boolean
 	)	{
 		let output
-		const collection = this.dbModels[modelName].collection
+		const collection = this.dbModels[modelName] && this.dbModels[modelName].collection
 		if(!collection) throw new Error(`Collection ${collection} not found`)
 
 		await collection.remove(query, {
 				single
 			})
 			.then(res => output = res)
+			.then(_ => this.app.emit("update", modelName))
 			.catch(err => output = err)
 		return output
 	}
@@ -266,13 +268,14 @@ export default class Shadow {
 				{ multi: true, overwrite: false }
 			)
 			.then(res => out = res)
+			.then(_ => this.app.emit("update", modelName))
 			.catch(err => out = err)
 		return out
 	}
 
 	// Data Methods
 	/**
-	 * @description Fetches data from data base and saves to ```this.data```
+	 * @description Fetches data from the database and saves to ```this.data```
 	 * @returns void
 	 */
 	async UpdateData(...modelNames: string[]) {

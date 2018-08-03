@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser"
 import path from "path"
 import setupDb from "./setupDb"
 
-import { IndexRoute } from "./routes/index"
+import { IndexRoute } from "./routes"
 setupDb()
 export const app = new ShadowMS(
 	mongoose.connection,
