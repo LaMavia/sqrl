@@ -74,7 +74,10 @@ export default class Shadow {
 		})
 
 		const apollo = new ApolloServer({
-			schema
+			schema,
+			context: (x: any) => ({
+				x
+			})
 		})
 		apollo.applyMiddleware({ app: this.app })
 		return apollo
@@ -183,29 +186,65 @@ export default class Shadow {
 		
 	}
 
+	GetFromCache(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
+		const modelCache: any[] = this.data[modelName]
+		if(modelCache) {
+
+			const founds = modelCache.filter(x => {
+				const cKeys = Object.keys(conditions)
+				let likeIt = true
+				
+				for(let i = 0; likeIt && i < cKeys.length; i++) {
+					const prop = cKeys[i]
+					const [cVal, xVal] = [conditions[prop], x[prop]]
+					if(Array.isArray(cVal) && Array.isArray(xVal)) {
+						likeIt = cVal.sort().toString() === xVal.sort().toString()
+					} else if(typeof cVal === "object" && typeof xVal === "object") {
+						likeIt = cVal.sort().toString() === xVal.sort().toString()
+					} else if(typeof cVal !== typeof xVal) {
+						likeIt = !!(String(cVal) === String(xVal))
+					} else likeIt = cVal === xVal
+ 				}
+				return likeIt
+			})
+			if(!+limit) return founds
+			else if(limit === 1 && founds.length >= 1) return founds[0] 
+
+			return founds
+
+		}
+		return null
+	}
+
 	// DataBase Methods
 	async GetFromDB(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
-		let out: any[] = []
-		await this.dbModels[modelName].find(conditions).limit(limit)
-			.then( d => out = d )
-			/**
-			 * @description Caching responses from the Database in their corresponding this.data[ModelName]
-			 */
-			.then( res => {	
-				if(Array.isArray(res)) {
-					for(const item of res) {
-						if(this.data[modelName].some((x: any) => String(x._id) === item._id)) {
-							this.data[modelName].push(item)
+		// Check in chache
+		const fromCache = this.GetFromCache(modelName, conditions, limit)
+		if(fromCache) return fromCache
+
+		else {
+			let out: any[] = []
+			await this.dbModels[modelName].find(conditions).limit(limit)
+				.then(d => out = d)
+				/**
+				 * @description Caching responses from the Database in their corresponding this.data[ModelName]
+				 */
+				.then(res => {
+					if (Array.isArray(res)) {
+						for (const item of res) {
+							if (this.data[modelName].some((x: any) => String(x._id) === item._id)) {
+								this.data[modelName].push(item)
+							}
+						}
+					} else if (res) {
+						if (this.data[modelName].some((x: any) => String(x._id) === (res as any)._id)) {
+							this.data[modelName].push(res)
 						}
 					}
-				} else if(res) {
-					if(this.data[modelName].some((x: any) => String(x._id) === (res as any)._id)) {
-						this.data[modelName].push(res)
-					}
-				}
-			})
-			.catch( err => new Error(err) )
-		return out
+				})
+				.catch(err => new Error(err))
+			return out
+		}
 	}
 
 	async AddToDB<ModelSchema>(

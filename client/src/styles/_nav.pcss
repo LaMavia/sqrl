@@ -1,38 +1,121 @@
+@import "./_breakpoints.pcss";
+
 :root {
   --nav-w: 60px;
   --nav-item-s: calc(var(--nav-w) / 2);
+  --nav-phone-h: 60px;
 }
 
 .nav {
+  z-index: 100;
   width: var(--nav-w);
   height: 100vh;
   background-color: #2B2B2B;
+
+  @include phone {
+    position: fixed;
+    --nav-w: 100vw;
+    height: var(--nav-phone-h);
+    --nav-item-s: 30px;
+    bottom: 0;
+    left: 0;
+  }
 
   &__items {
     display: flex;
     flex-flow: column nowrap;
     align-content: space-around;
+    background-color: inherit;
+    min-height: 100vh;
+    list-style: none;
+
+    @include phone {
+      flex-flow: row nowrap;
+      min-height: 0;
+      justify-items: center;
+    }
 
     &__item {
       width: var(--nav-item-s);
       height: var(--nav-item-s);
-      overflow: hidden;
       margin: 32px auto 0 auto;
       cursor: pointer;
+      position: relative;
+
+      @include phone {
+        margin: calc((var(--nav-phone-h) - var(--nav-item-s)) / 2) auto;
+      }
 
       &:first-of-type {
         margin-top: calc((var(--nav-w) - var(--nav-item-s)) / 1.5);
+
+        @include phone {
+          margin: auto;
+        }
       }
 
       &__btn {
         background-color: transparent; 
         border: none;
         cursor: pointer;
+        display: block;
       }
 
       &__icon, &__link, &__btn {
         width: var(--nav-item-s);
         fill: #fefefe;
+      }
+
+      &__drawer {
+        display: flex;
+        flex-flow: column nowrap;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        transition: .15s 0s ease-out;
+        width: 16rem;
+        height: 100vh;
+        background-color: #3c3c3c;
+        transform: translateX(-100%);
+
+        @include phone {
+          bottom: 0;
+          top: auto;
+          width: 100%;
+          height: auto;
+          transform: translateY(100%);
+        }
+
+        &--open {
+          transform: translateX(var(--nav-w));
+
+          @include phone {
+            transform: translateY(calc(var(--nav-phone-h) * -1 + 1px));
+          }
+        }
+
+        &__item {
+          --h: var(--nav-w);
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: var(--h);
+          padding: 0 5%;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+          @include phone {
+            --h: var(--nav-phone-h);
+          }
+
+          &__link {          
+            width: 100%;
+            font-size: calc(var(--h) / 3.3);
+            text-decoration: none;
+            color: #fefefe;
+            text-transform: capitalize;
+          }
+        }
       }
     }
   }

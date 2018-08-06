@@ -1,6 +1,5 @@
 import { combineReducers, Action } from "redux"
 import {
-  USER_LOGGED,
   USER_ERRORED,
   USER_LOADED,
   USER_UNLOADED
@@ -8,13 +7,11 @@ import {
 import { User } from "../dtos/user.dto"
 
 export interface UserState {
-  loggedIn: boolean
   me: null | User
   error: null | Error
 }
 
 export const InitialUserState: UserState = {
-  loggedIn: false,
   me: null,
   error: null,
 }
@@ -26,16 +23,6 @@ function errorReducer(error = null, action: ErrorAction) {
   switch(action.type) {
     case USER_ERRORED: return action.error
     default: return error
-  }
-}
-
-interface LoggedInAction extends Action {
-  isLoggedIn: boolean
-}
-function loggedInReducer(isLoggedIn: boolean = false, action: LoggedInAction) {
-  switch(action.type) {
-    case USER_LOGGED: return action.isLoggedIn
-    default: return isLoggedIn
   }
 }
 
@@ -53,6 +40,5 @@ function _userReducer(user: User | null = null, action: UserAction) {
 // @ts-ignore
 export const userReducer = combineReducers<UserState>({
   error: errorReducer,
-  loggedIn: loggedInReducer,
   me: _userReducer
 })

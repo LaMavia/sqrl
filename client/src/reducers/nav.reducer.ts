@@ -2,7 +2,8 @@ import {
   NAV_SECTION_OPEN, 
   NAV_SECTION_CLOSE,
   NAV_MODAL_OPEN,
-  NAV_MODAL_CLOSE 
+  NAV_MODAL_CLOSE,
+  NAV_SECTION_SWITCH 
 } from "../actions/nav.action"
 import { Action } from "redux"
 
@@ -82,14 +83,21 @@ export function navReducer(nav: NavState = InitialNavState, action: NavAction) {
 
 		case NAV_SECTION_CLOSE: {
 			const sc = Object.assign({}, nav.sections)
-			for (const sName in sc) {
-				sc[sName].open = false
-			}
+			sc[action.section].open = false
 			return {
         ...nav,
 				sections: sc
 			}
-		}
+    }
+    
+    case NAV_SECTION_SWITCH: {
+      const sc = Object.assign({}, nav.sections)
+			sc[action.section].open = !sc[action.section].open
+			return {
+        ...nav,
+				sections: sc
+			}
+    }
 
     case NAV_MODAL_OPEN: {
       const modals = nav.modals

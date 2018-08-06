@@ -7,10 +7,13 @@ module.exports = ctx => {
 		plugins: [
 			require("postcss-import")({ root: ctx.file.dirname }),
 			require("rucksack-css"),
+			require("precss")(),
 			require('postcss-write-svg')(),
 			require('postcss-at-debug')(),
 			require("postcss-nested")(),
 			require("postcss-utilities")(),
+			require("postcss-mixins")(),
+			require("postcss-pxtorem")(),
 			isProd && require("cssnano")()
 		]
 	}

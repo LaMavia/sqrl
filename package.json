@@ -9,7 +9,9 @@
     "server": "nodemon --exec \"ts-node ./server/app.ts\" ./server/app.ts ",
     "db": "mongod --dbpath C:\\Users\\xelox\\MongoDB\\data\\db",
     "postcss": "postcss ./client/src/styles/index.pcss -w -o ./client/assets/css/styles.css",
-    "postcss:build": "postcss ./client/src/styles/index.pcss -o ./client/assets/css/styles.css --env production"
+    "postcss:build": "postcss ./client/src/styles/index.pcss -o ./client/assets/css/styles.css --env production",
+    "dev": "concurrently -p name --allow-restart \"npm run db\" \"npm run server\" \"npm run webpack\" \"npm run postcss\" ",
+    "dev:no-server": "concurrently -p name --allow-restart \"npm run db\" \"npm run webpack\" \"npm run postcss\" "
   },
   "repository": {
     "type": "git",
@@ -54,11 +56,14 @@
     "postcss-cssnext": "^3.1.0",
     "postcss-current-selector": "0.0.3",
     "postcss-import": "^11.1.0",
+    "postcss-mixins": "^6.2.0",
     "postcss-nested": "^3.0.0",
     "postcss-nested-ancestors": "^2.0.0",
+    "postcss-pxtorem": "^4.0.1",
     "postcss-short": "^4.1.0",
     "postcss-utilities": "^0.8.0",
     "postcss-write-svg": "github:jonathantneal/postcss-write-svg",
+    "precss": "^3.1.2",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

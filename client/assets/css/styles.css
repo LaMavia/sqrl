@@ -10,42 +10,295 @@ html, body {
   overflow-x: hidden;
 }
 
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: row nowrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 :root {
   --nav-w: 60px;
+  --nav-item-s: calc(60px / 2);
   --nav-item-s: calc(var(--nav-w) / 2);
+  --nav-phone-h: 60px;
 }
 
 .nav {
+  z-index: 100;
+  width: 60px;
   width: var(--nav-w);
   height: 100vh;
   background-color: #2B2B2B;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav {
+    position: fixed;
+    --nav-w: 100vw;
+    height: 60px;
+    height: var(--nav-phone-h);
+    --nav-item-s: 30px;
+    bottom: 0;
+    left: 0;
+  }
 }
 
 .nav__items {
     display: flex;
     flex-flow: column nowrap;
     align-content: space-around;
+    background-color: inherit;
+    min-height: 100vh;
+    list-style: none;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items {
+    flex-flow: row nowrap;
+    min-height: 0;
+    justify-items: center;
   }
+}
 
 .nav__items__item {
+      width: calc(60px / 2);
       width: var(--nav-item-s);
+      height: calc(60px / 2);
       height: var(--nav-item-s);
-      overflow: hidden;
       margin: 32px auto 0 auto;
       cursor: pointer;
-    }
+      position: relative;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items__item {
+    margin: calc((60px - calc(60px / 2)) / 2) auto;
+    margin: calc((var(--nav-phone-h) - var(--nav-item-s)) / 2) auto;
+  }
+}
 
 .nav__items__item:first-of-type {
-        margin-top: calc((var(--nav-w) - var(--nav-item-s)) / 1.5);
-      }
+  margin-top: calc((60px - calc(60px / 2)) / 1.5);
+  margin-top: calc((var(--nav-w) - var(--nav-item-s)) / 1.5);
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items__item:first-of-type {
+    margin: auto;
+  }
+}
 
 .nav__items__item__btn {
         background-color: transparent; 
         border: none;
         cursor: pointer;
-      }
+        display: block;
+}
 
 .nav__items__item__icon, .nav__items__item__link, .nav__items__item__btn {
+        width: calc(60px / 2);
         width: var(--nav-item-s);
         fill: #fefefe;
-      }
+}
+
+.nav__items__item__drawer {
+        display: flex;
+        flex-flow: column nowrap;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        transition: .15s 0s ease-out;
+        width: 16rem;
+        height: 100vh;
+        background-color: #3c3c3c;
+        transform: translateX(-100%);
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items__item__drawer {
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    transform: translateY(100%);
+  }
+}
+
+.nav__items__item__drawer--open {
+          transform: translateX(60px);
+          transform: translateX(var(--nav-w));
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items__item__drawer--open {
+    transform: translateY(calc(60px * -1 + 1px));
+    transform: translateY(calc(var(--nav-phone-h) * -1 + 1px));
+  }
+}
+
+.nav__items__item__drawer__item {
+          --h: 60px;
+          --h: var(--nav-w);
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: var(--h);
+          height: var(--h);
+          padding: 0 5%;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .nav__items__item__drawer__item {
+    --h: 60px;
+    --h: var(--nav-phone-h);
+  }
+}
+
+.nav__items__item__drawer__item__link {          
+            width: 100%;
+            font-size: calc(var(--h) / 3.3);
+            font-size: calc(var(--h) / 3.3);
+            text-decoration: none;
+            color: #fefefe;
+            text-transform: capitalize;
+}
+
+:root {
+  --sign-w: 27.9375rem;
+}
+
+.bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(to bottom left, #059D8E, #A7FFA7);
+}
+
+.sign {
+  position: fixed;
+  width: 27.9375rem;
+  width: var(--sign-w);
+  height: 60%;
+  right: 50%;
+  top: 50%;
+  transform: translate(calc(50% + 60px / 2), -50%);
+  transform: translate(calc(50% + var(--nav-w) / 2), -50%);
+  background-color: #ffffff;
+  box-shadow: 0 3px 6px -2px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-flow: column nowrap;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #707070;
+  z-index: 2;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .sign {
+    height: calc(100% - 60px);
+    height: calc(100% - var(--nav-phone-h));
+    --sign-w: 100%;
+    left: 0;
+    top: 0;
+    transform: translate(0, 0);
+  }
+}
+
+.sign__title {
+    font-size: 1.5625rem;
+    font-weight: 100;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 25px;
+    margin-bottom: 91px;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .sign__title {
+    margin-bottom: 6vh;
+  }
+}
+
+.sign__form {
+    padding: 0 70px;
+    display: flex;
+    flex-flow: column nowrap;
+    --item-h: 47px;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .sign__form {
+    padding: 0 33px;
+  }
+}
+
+.sign__form__part {
+      width: 100%;
+      display: flex;
+      flex-flow: column nowrap;
+      margin-bottom: 27px;
+}
+
+.sign__form__part:last-of-type {
+  margin-bottom: 70px;
+}
+
+.sign__form__part__label {
+        font-size: 0.8125rem;
+        text-transform: capitalize;
+        padding-left: 10px;
+}
+
+.sign__form__part__input {
+        
+        border: none;
+        background-color: inherit !important;
+        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+        height: var(--item-h);
+        height: var(--item-h);
+        font-size: calc(var(--item-h) / 3);
+        font-size: calc(var(--item-h) / 3);
+        padding: 0 5%;
+}
+
+.sign__form__submit {
+      background-color: #009688;
+      text-align: center;
+      font-size: 0.9375rem;
+      justify-content: baseline;
+      height: var(--item-h);
+      height: var(--item-h);
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+
+.sign__txt {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+.sign__txt__link {
+      color: #00EEFF;
+    }

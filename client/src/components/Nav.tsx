@@ -1,13 +1,13 @@
 import React from "react"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
-import { openNavSection, closeNavSection, openNavModal, closeNavModal } from "../actions/nav.action"
+import { switchNavSection, closeNavSection, openNavModal, closeNavModal } from "../actions/nav.action"
 import { NavState, Section, NavLink as INavLink, NavButton } from "../reducers/nav.reducer"
 import ReactSVG from "react-svg"
 import { NavLink } from "react-router-dom"
 import { MyStore, State } from "../store";
 
-const connectedNav = ({sections, links, modals, openSection, closeSection, openModal, closeModal}: any) => {
+const connectedNav = ({sections, links, modals, switchSection, closeSection, openModal, closeModal}: any) => {
   let i = 0
   const renderSections = (sections: {[name: string]: Section}) => {
     const renderedList = []
@@ -15,14 +15,14 @@ const connectedNav = ({sections, links, modals, openSection, closeSection, openM
       const s = sections[name]
       renderedList.unshift((
           <li className="nav__items__item" key={ i++ }>
-            <button className="nav__items__item__btn" onClick={ openSection(name) } >
-              <ReactSVG className="nav__items__item__btn__icon" path={ s.icon } />
+            <button className="nav__items__item__btn">
+              <ReactSVG className="nav__items__item__btn__icon" path={ s.icon } onClick={ switchSection(name) } />
             </button>
-            <ul className="nav__items__item__drawer">
+            <ul className={`nav__items__item__drawer ${s.open ? "nav__items__item__drawer--open" : ""}`}>
               {
                 s.items.map((item, i) => (
                   <li className="nav__items__item__drawer__item" key={i}>
-                    <NavLink onClick={closeSection(name)} to={ item.href }>{ item.name }</NavLink>
+                    <NavLink className="nav__items__item__drawer__item__link" onClick={closeSection(name)} to={ item.href }>{ item.name }</NavLink>
                   </li>
                 ))
               }
@@ -77,10 +77,10 @@ const mapStateToProps = (state: State) => ({
   modals: state.nav.modals
 })
 const mapDispatchToProps = (_dispatch: Dispatch) => ({
-  openSection: (section: string) => openNavSection.bind({}, section),
-  closeSection: (section: string) => closeNavSection.bind({}, section),
-  openModal: (modal: string) => openNavModal.bind({}, modal),
-  closeModal: (modal: string) => closeNavModal.bind({}, modal)
+  switchSection: (section: string) => switchNavSection(section).bind({}, _dispatch),
+  closeSection: (section: string) => closeNavSection(section).bind({}, _dispatch),
+  openModal: (modal: string) => openNavModal(modal).bind({}, _dispatch),
+  closeModal: (modal: string) => closeNavModal(modal).bind({}, _dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(connectedNav)

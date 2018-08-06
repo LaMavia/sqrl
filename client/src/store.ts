@@ -19,6 +19,10 @@ export interface State {
 
 export type MyStore = Store<State, Action<any>>
 
+let middleware = [applyMiddleware(thunk)]
+// @ts-ignore
+if(window.__REDUX_DEVTOOLS_EXTENSION__) middleware.push(window.__REDUX_DEVTOOLS_EXTENSION__())
+
 // @ts-ignore
 export const store: MyStore = createStore(
 	// @ts-ignore
@@ -34,8 +38,6 @@ export const store: MyStore = createStore(
 		nav: InitialNavState
 	},
 	compose(
-    applyMiddleware(thunk),
-    // @ts-ignore
-		window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    ...middleware
 	)
 )

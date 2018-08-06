@@ -33,6 +33,7 @@ export const UserSchema: GraphQLSchema = makeExecutableSchema({
 			Users(_id: ID, Name: String, Username: String, Email: String): [User]
 			AllUsers: [User]
 			Login(Username: String!, Password: String!): User
+			LoginWithID(_id: ID!): User
 		}
 
 		type Mutation {
@@ -145,7 +146,18 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 			if(!users || users.length < 1) return null
 			const user = users[0]
 			const samePassword = await bcrypt.compare(Password, user.Password)
-			if(samePassword) return prepare(user)
+			if(samePassword) {
+				return prepare(user)
+			}
+			return null
+		},
+		LoginWithID: async (_root, {_id}) => {
+			const users = await Shadow.GetFromDB("User", { _id: String(_id) })
+			if(!users || users.length < 1) return null
+			const user = users[0]
+			if(user) {
+				return prepare(user)
+			}
 			return null
 		}
 	}

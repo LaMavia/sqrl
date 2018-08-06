@@ -1,16 +1,32 @@
 import React from "react"
 import Nav from "./components/Nav"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { connect } from "react-redux"
 import Home from "./routes/Home";
 import Login from "./routes/Login";
+import { getCookies } from "./functions/getCookies"
+import { State } from "./store";
+import { Dispatch } from "../../node_modules/redux";
+import { loginWIthID } from "./actions/user.actions";
+import { User } from "./dtos/user.dto";
 
-export default class App extends React.PureComponent {
-	constructor(_props: any) {
-		super(_props)
+interface Props {
+	loginWithID: (_id: string) => any
+	user: User
+}
+
+class App extends React.PureComponent<Props> {
+	constructor(props: Props) {
+		super(props)
 	}
 
 	render() {
 		const supportsHistory = 'pushState' in window.history
+		const { UserID: _id } = getCookies()
+		if(_id && !this.props.user) {
+			this.props.loginWithID(_id)
+		}
+
 		return (
 			<Router forceRefresh={!supportsHistory}>
 				<div className="app">
@@ -24,3 +40,13 @@ export default class App extends React.PureComponent {
 		)
 	}
 }
+
+const mstp = (state: State) => ({
+	user: state.user.me
+})
+
+const mdtp = (dispatch: Dispatch) => ({
+	loginWithID: (_id: string) => dispatch(loginWIthID(`${location.origin}/graphql`, _id))
+})
+
+export default connect(mstp, mdtp)(App)
