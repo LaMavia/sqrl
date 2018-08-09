@@ -1,6 +1,6 @@
 import React from "react"
 import Nav from "./components/Nav"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import Home from "./routes/Home";
 import Login from "./routes/Login";
@@ -9,6 +9,7 @@ import { State } from "./store";
 import { Dispatch } from "../../node_modules/redux";
 import { loginWIthID } from "./actions/user.actions";
 import { User } from "./dtos/user.dto";
+import Register from "./routes/Register";
 
 interface Props {
 	loginWithID: (_id: string) => any
@@ -34,6 +35,8 @@ class App extends React.PureComponent<Props> {
 					<Switch>
 						<Route path="/" exact component={Home}/>
 						<Route path="/login" component={Login}/>
+						<Route path="/register" component={Register}/>
+						<Route path="*" render={() => <Redirect to="/"/>}/>
 					</Switch>
 				</div>
 			</Router>
@@ -46,7 +49,7 @@ const mstp = (state: State) => ({
 })
 
 const mdtp = (dispatch: Dispatch) => ({
-	loginWithID: (_id: string) => dispatch(loginWIthID(`${location.origin}/graphql`, _id))
+	loginWithID: (_id: string) => dispatch(loginWIthID(`${location.origin}/graphql`, _id)),
 })
 
 export default connect(mstp, mdtp)(App)

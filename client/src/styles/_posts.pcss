@@ -1,0 +1,126 @@
+@import "./_breakpoints.pcss";
+.home {
+  width: 100%;
+  padding: 34px;
+}
+
+.posts {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template: 100% / 70% 1fr;
+  grid-template-areas: "img txt";
+
+  &__txt {
+    grid-area: txt;
+    display: flex;
+    flex-flow: column nowrap;
+
+    &__switch {
+      display: none;
+      &~ {
+        display: flex;
+      }
+      @include phone {
+        display: block;
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+
+      &__item {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-flow: column nowrap;
+        background-color: #FFFFFF;
+        box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.4);
+
+        &__top {
+          --h: 6vh;
+          --img-s: calc(var(--h) / 1.5);
+          --txt-h: calc(var(--img-s) / 2);
+          height: var(--h);
+          display: grid;
+          grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
+          grid-template-areas: 
+            "img author"
+            "img date"
+          ;
+          padding: calc((var(--h) - var(--img-s)) / 2) 0;
+          column-gap: 10px;
+
+          &__img {
+            grid-area: img;
+            height: var(--img-s);
+            width: @height;
+            border-radius: 50%;
+            margin: auto;
+          }
+
+          &__author, &__date {
+            font-size: 15px;
+            line-height: var(--txt-h);
+          }
+
+          &__author {
+            grid-area: author;
+          }
+
+          &__date {
+            grid-area: date;
+          }
+        }
+
+        &__body {
+          padding: 0 15px;
+          font-weight: 200;
+          margin-bottom: 15px;
+          white-space: pre-line;
+        }
+
+        &__bottom {
+          --h: 5vh;
+          --item-h: calc(var(--h) / 2);
+          --item-fs: calc(var(--item-h) / 1.5);
+          background-color: #EEEEEE;
+          display: flex;
+          flex-flow: row nowrap;
+          padding: calc((var(--h) - var(--item-h)) / 2) 15px;
+
+          &__btn {
+            --c: #707070;
+            display: flex;
+            flex-flow: row nowrap;
+            text-align: center;
+            -webkit-appearance: none;
+            border: none;
+            background-color: transparent;
+            margin-right: 13px;
+
+            &__icon svg {
+              height: var(--item-h);
+              margin-right: 2.5px;
+              fill: var(--c);
+            }
+
+            &__counter {
+              display: block;
+              height: var(--item-h);
+              width: auto;
+              line-height: calc(var(--item-h) + 1px);
+              font-size: var(--item-fs);
+              color: var(--c);
+            }
+ 
+          }
+        }
+
+      }
+    }
+  }
+}

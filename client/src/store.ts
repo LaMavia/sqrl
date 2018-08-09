@@ -10,11 +10,13 @@ import thunk from "redux-thunk"
 import { postsReducer, InitialPostsState, PostsState } from "./reducers/post.reducer"
 import { userReducer, InitialUserState, UserState } from "./reducers/user.reducer"
 import { navReducer, InitialNavState, NavState } from "./reducers/nav.reducer"
+import { authorsReducer, InitialAuthorsState, AuthorsState } from "./reducers/authors.reducer"
 
 export interface State {
 	posts: PostsState
 	user: UserState
-	nav: NavState
+	nav: NavState,
+	authors: AuthorsState
 }
 
 export type MyStore = Store<State, Action<any>>
@@ -29,13 +31,15 @@ export const store: MyStore = createStore(
 	combineReducers({
 		posts: postsReducer,
 		user: userReducer,
-		nav: navReducer
+		nav: navReducer,
+		authors: authorsReducer
 	}),
 	// @ts-ignore
 	{
 		posts: InitialPostsState,
 		user: InitialUserState,
-		nav: InitialNavState
+		nav: InitialNavState,
+		authors: InitialAuthorsState
 	},
 	compose(
     ...middleware

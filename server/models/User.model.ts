@@ -30,7 +30,7 @@ export const UserSchema: GraphQLSchema = makeExecutableSchema({
 	typeDefs: gql`
 		type Query {
 			User(_id: ID, Name: String, Username: String, Email: String): User
-			Users(_id: ID, Name: String, Username: String, Email: String): [User]
+			Users(Ids: [ID], _id: ID, Name: String, Username: String, Email: String): [User]
 			AllUsers: [User]
 			Login(Username: String!, Password: String!): User
 			LoginWithID(_id: ID!): User
@@ -134,7 +134,18 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 		},
 		Users: async (_root, args) => {
 			args = objectifyObjectsId(args)
-			const res = await Shadow.GetFromDB("User", args)
+			let res
+			if(args.Ids) {
+				const argsCopy = Object.assign({}, args)
+				delete argsCopy.Ids 
+				res = []
+				for(const _id of args.Ids) {
+					res.push( await Shadow.GetFromDB("User", { _id, ...argsCopy }, 1) )
+				}
+			} else {
+				res = await Shadow.GetFromDB("User", args)
+			}
+			
 			return res.map(prepare)
 		},
 		AllUsers: async (_root, args) => {

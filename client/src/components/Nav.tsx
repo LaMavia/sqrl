@@ -2,10 +2,10 @@ import React from "react"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
 import { switchNavSection, closeNavSection, openNavModal, closeNavModal } from "../actions/nav.action"
-import { NavState, Section, NavLink as INavLink, NavButton } from "../reducers/nav.reducer"
+import { Section, NavLink as INavLink, NavButton } from "../reducers/nav.reducer"
 import ReactSVG from "react-svg"
 import { NavLink } from "react-router-dom"
-import { MyStore, State } from "../store";
+import { State } from "../store";
 
 const connectedNav = ({sections, links, modals, switchSection, closeSection, openModal, closeModal}: any) => {
   let i = 0
@@ -46,7 +46,7 @@ const connectedNav = ({sections, links, modals, switchSection, closeSection, ope
 
   const renderModals = (btns: NavButton[]) => 
     btns && btns.map(btn => {
-      const Modal = btn.modal
+      const Modal: any = btn.modal
       return (
         <li className="nav__items__item" key={ i++ }>
           <button className="nav__items__item__btn" onClick={ openModal(btn.name) }>

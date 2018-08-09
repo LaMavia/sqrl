@@ -35,7 +35,6 @@ export const userLoaded = (user: User) => ({
 export const userUnloaded = () => ({
 	type: USER_UNLOADED
 })
-
 // Functions ----------------------------------------------------------------
 
 export const getUser = (apiURL: string, conditions: string) =>
@@ -67,7 +66,7 @@ export const getUser = (apiURL: string, conditions: string) =>
 export const loginUser = (apiURL: string, username: string, password: string) =>
 [apiURL, username, password].some(x => typeof x === "undefined")
 	// @ts-ignore because of "this" binding
-	? getUser.bind(this, ...[apiURL, _id])
+	? loginUser.bind(this, ...[apiURL, _id])
 	: (dispatch: Dispatch) => {
 		dispatch(userIsLoading(true))
 		// Test user: Name: "test", Username: "TestLogin", Password: "Test123", Email: "Test@mail.com"
@@ -101,7 +100,7 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 export const loginWIthID = (apiURL: string, _id: string) =>
 [apiURL, _id].some(x => typeof x === "undefined")
 	// @ts-ignore because of "this" binding
-	? getUser.bind(this, ...[apiURL, _id])
+	? loginWIthID.bind(this, ...[apiURL, _id])
 	: (dispatch: Dispatch) => {
 		dispatch(userIsLoading(true))
 		// Test user: Name: "test", Username: "TestLogin", Password: "Test123", Email: "Test@mail.com"
@@ -132,7 +131,48 @@ export const loginWIthID = (apiURL: string, _id: string) =>
 			.finally(() => dispatch(userIsLoading(false)))
 	}
 
-
 export const logoutUser = (dispatch: Dispatch) => {
 	dispatch(userUnloaded())
 }
+
+export const registerUser = (apiURL: string, Username: string, Password: string, Email: string, Name: string) =>
+[apiURL, Username, Password, Email, Name].some(x => typeof x === "undefined")
+	// @ts-ignore because of "this" binding
+	? registerUser.bind(this, ...[apiURL, Username, Password, Email, Name].filter(x => typeof x !== "undefined"))
+	: (dispatch: Dispatch) => {
+		dispatch(userIsLoading(true))
+		// Test user: Name: "test", Username: "TestLogin", Password: "Test123", Email: "Test@mail.com"
+		sendQuery(`
+			mutation {
+				userAdd(
+					Name: "${Name}",
+					Username: "${Username}",
+					Password: "${Password}",
+					Email: "${Email}"
+				) {
+					_id
+					Name
+					Username
+					Email
+					ProfileImageURL
+					BackgroundImageURL
+					Followers
+				}
+			}
+		`, {}, apiURL)
+			.then(res => res.json())
+			.then(({data}) => {
+				if(!data.userAdd) { // Returned null - user is taken
+					throw "Username / Email already taken"
+				}
+				dispatch(userLoaded(data.userAdd))
+				return data.userAdd
+			})
+			.then(({_id}) => {
+				const d = new Date()
+				d.setTime(d.getTime() + 7*24*60*60*1000)
+				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
+			})
+			.catch(err => dispatch(userErrored(new Error(err))))
+			.finally(() => dispatch(userIsLoading(false)))
+	}

@@ -43,7 +43,11 @@ interface PostsAction extends Action {
 }
 function _postsReducer(posts: Post[] = [], action: PostsAction) {
 	switch (action.type) {
-		case POSTS_LOADED: return [...posts, ...action.posts]
+		case POSTS_LOADED: return [
+			...posts, ...action.posts.filter(post => 
+				!posts.some(statePost => Object.is(post, statePost))
+			)
+		]
 		default: return posts
 	}
 }

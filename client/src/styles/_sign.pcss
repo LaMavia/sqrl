@@ -11,12 +11,13 @@
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to bottom left, #059D8E, #A7FFA7);
+  overflow-y: auto;
 }
 
 .sign {
-  position: fixed;
+  position: absolute;
   width: var(--sign-w);
-  height: 60%;
+  height: auto;
   right: 50%;
   top: 50%;
   transform: translate(calc(50% + var(--nav-w) / 2), -50%);
@@ -29,11 +30,12 @@
   z-index: 2;
 
   @include phone {
-    height: calc(100% - var(--nav-phone-h));
+    min-height: calc(100% - var(--nav-phone-h));
     --sign-w: 100%;
     left: 0;
     top: 0;
     transform: translate(0, 0);
+    margin-bottom: var(--nav-phone-h);
   }
 
   &__title {
@@ -53,6 +55,7 @@
     padding: 0 70px;
     display: flex;
     flex-flow: column nowrap;
+    overflow-y: visible;
     --item-h: 47px;
 
     @include phone {
@@ -96,6 +99,7 @@
       font-weight: bold;
       border: none;
       box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+      margin-bottom: 108px;
     }
   }
 
