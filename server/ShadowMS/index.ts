@@ -6,9 +6,20 @@ import { GraphQLSchema } from "graphql"
 import * as path from "path"
 
 import iShadow from "./types/basic" 
+import Models from "./types/models";
+import nodemailer from "nodemailer"
+import Mail from "nodemailer/lib/mailer"
+import { MailOptions } from "nodemailer/lib/stream-transport";
 /**
  * @todo Add CMS routes \w handlers
 */
+
+interface Data extends iShadow.LooseObject {
+	origin: string
+	nonActiveUsers: {
+		[id: string]: Models.IUser
+	}
+} 
 
 export default class Shadow {
 	
@@ -22,8 +33,9 @@ export default class Shadow {
 	routes: iShadow.Route[]
 	APIRoutes: iShadow.APIRoute[]
 	CatchHandler: iShadow.CatchHandler
-	data: iShadow.LooseObject
+	data: Data
 	_env: string
+	mail: Mail
 
 	constructor(
 		dbConnection: mongoose.Connection, 
@@ -43,10 +55,29 @@ export default class Shadow {
 		this.middleware = middleware
 		this.routes = routes
 		this.APIRoutes = APIRoutes
-		this.data = {}
 		this._env = process.env["NODE_ENV"] || "dev"
 
+		this.data = {
+			origin: this._env === "production"
+			? process.env["HOST"] as string
+			: `${process.env["HOST"]}${process.env["PORT"]
+				? `:${process.env["PORT"]}`
+				: ""
+			}`,	
+			nonActiveUsers: {}
+		}
+
 		this.CatchHandler = CatchHandler
+
+		this.mail = nodemailer.createTransport({
+			service: "gmail",
+			auth: {
+				user: process.env["EMAIL"],
+				pass: process.env["EMAIL_PASS"]
+			}
+		}, {
+			from: "media.sqrl@gmail.com"
+		})
 
 		this.app = express()
 		this.apollo = this.InitApollo(graphqlSchemas, graphqlResolvers)
@@ -125,23 +156,6 @@ export default class Shadow {
 				const newModel = this.db.model(schema.name, schema.schema, schema.collection)
 
 				this.dbModels[schema.name] = newModel
-				/*new Proxy(newModel, {
-					get(target, propKey, _receiver) {
-						if(target && propKey !== "Query") {
-							// @ts-ignore
-							const calledMethod = target[propKey]
-							return !(String(propKey) && /find/g.test(String(propKey)) && target)
-								? calledMethod
-								: (...args: any[]) => {
-									// console.dir(args, { colors: true })
-									const res = calledMethod.call(target, ...args)
-									debugger
-									return res
-								}
-						}
-						return () => {}
-					}
-				})*/
 			}, this
 		)
 	}
@@ -165,16 +179,6 @@ export default class Shadow {
 		this.app.set("views", path.join(__dirname, "..","views"))
 		this.app.set("view engine", "pug")
 		
-		this.data.origin = this._env === "production"
-			? process.env["HOST"]
-			:`${process.env["HOST"]}${process.env["PORT"] 
-			? `:${process.env["PORT"]}`
-			: ""
-		}`
-		this.data.sharedMethods = {
-			GetFromDB: this.GetFromDB.bind(this)
-		}
-
 		this.InitMiddleware()
 		this.InitAPI()
 		this.InitModels()
@@ -336,5 +340,31 @@ export default class Shadow {
 			}
 		} 
 	}	
+
+	// Mailer methods
+	SendRegConfirm(to: string, confirmationID: string) {
+		if(!process.env["EMAIL"]) throw new Error(`process.env["EMAIL"] is undefined`)
+		if(!to || !confirmationID) throw new Error(`User credentials not specified`)
+		let out
+		const mailOptions: MailOptions = {
+			from: process.env["EMAIL"],
+			to,
+			subject: "SQRL Media Registration Confirmation",
+			html: `
+				<a href="${this.data.origin}/active?id=${confirmationID}">
+					Activate your account
+				</a>
+			`
+		}
+
+		this.mail.sendMail(mailOptions)
+			.then(() => out = true)
+			.catch(err => {
+				out = false
+				this.CatchHandler(err)
+			})
+
+		return out
+	}
 
 }

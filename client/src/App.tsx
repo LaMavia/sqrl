@@ -6,7 +6,7 @@ import Home from "./routes/Home";
 import Login from "./routes/Login";
 import { getCookies } from "./functions/getCookies"
 import { State } from "./store";
-import { Dispatch } from "../../node_modules/redux";
+import { Dispatch } from "redux";
 import { loginWIthID } from "./actions/user.actions";
 import { User } from "./dtos/user.dto";
 import Register from "./routes/Register";

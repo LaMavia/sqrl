@@ -17,15 +17,14 @@ declare namespace Models {
   } interface NavPage extends INavPage, mongoose.Document {}
 
   interface IUser {
-    Login: string
+    Username: string
     Password: string // hashed using bcrypt
     Email: string
 
     Name: string // Both firstname and lastname
-    Desc: string
-    BirthDate: string // YYYY MM DD
-    Img: string
-    Type: string // User / Admin
+    ProfileImageURL: string
+    BackgroundImageURL: string
+    Followers: mongoose.Types.ObjectId[]
   } interface User extends IUser, mongoose.Document {
     _id: string
   }

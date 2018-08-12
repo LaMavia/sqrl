@@ -1,126 +1,192 @@
-@import "./_breakpoints.pcss";
+@import './_breakpoints.pcss';
+
+@mixin Item() {
+  margin-top: 1px !important;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	display: flex;
+	flex-flow: column nowrap;
+	background-color: #ffffff;
+	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
+
+	&__top {
+		--h: 6vh;
+		--img-s: calc(var(--h) / 1.5);
+		--txt-h: calc(var(--img-s) / 2);
+		height: var(--h);
+		display: grid;
+		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
+		grid-template-areas:
+			'img author'
+			'img date';
+		padding: calc((var(--h) - var(--img-s)) / 2) 0;
+		column-gap: 10px;
+    padding-left: 15px;
+
+		&__img {
+			grid-area: img;
+			height: var(--img-s);
+			width: @height;
+			border-radius: 50%;
+			margin: auto;
+		}
+
+		&__author,
+		&__date {
+			font-size: 15px;
+			line-height: var(--txt-h);
+		}
+
+		&__author {
+			grid-area: author;
+		}
+
+		&__date {
+			grid-area: date;
+		}
+	}
+
+	&__body {
+		padding: 0 15px;
+		font-weight: 200; 
+		margin-bottom: 15px;
+		white-space: pre-line;
+	}
+
+	&__bottom {
+		--h: 5vh;
+		--item-h: calc(var(--h) / 2);
+		--item-fs: calc(var(--item-h) / 1.5);
+		background-color: #eeeeee;
+		display: flex;
+		flex-flow: row nowrap;
+		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
+
+		&__btn {
+			--c: #707070;
+			display: flex;
+			flex-flow: row nowrap;
+			text-align: center;
+			-webkit-appearance: none;
+			border: none;
+			background-color: transparent;
+			margin-right: 13px;
+
+			&__icon svg {
+				height: var(--item-h);
+				margin-right: 2.5px;
+				fill: var(--c);
+			}
+
+			&__counter {
+				display: block;
+				height: var(--item-h);
+				width: auto;
+				line-height: calc(var(--item-h) + 1px);
+				font-size: var(--item-fs);
+				color: var(--c);
+			}
+		}
+	}
+}
+
 .home {
-  width: 100%;
-  padding: 34px;
+	$p: 33px;
+	width: 100%;
+	padding: $p $p 0 $p;
+	height: 100vh;
+	overflow: hidden;
 }
 
 .posts {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template: 100% / 70% 1fr;
-  grid-template-areas: "img txt";
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template: 100% / 64% 1fr;
+	grid-template-areas: 'img txt';
+  grid-column-gap: 33px;
+	overflow: hidden;
 
-  &__txt {
-    grid-area: txt;
-    display: flex;
-    flex-flow: column nowrap;
+	&__img,
+	&__txt {
+		display: flex;
+		flex-flow: column nowrap;
+		overflow-y: auto;
 
-    &__switch {
-      display: none;
-      &~ {
-        display: flex;
+		&__switch {
+			display: none;
+      & ~ * {
+        display: none;
       }
-      @include phone {
-        display: block;
-      }
-    }
+			&:checked ~ * {
+				display: block;
+			}
+			@include phone {
+				display: block;
+			}
+		}
+	}
 
-    &__list {
-      display: flex;
-      flex-flow: column nowrap;
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
+	&__img {
+		grid-area: img;
+    height: auto;
 
-      &__item {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        flex-flow: column nowrap;
-        background-color: #FFFFFF;
-        box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.4);
+		&__list {
+			width: 100%;
+			overflow-x: hidden;
+			overflow-y: auto;
+      column-fill: balance;
+      // column-count: 3;
+      column-width: 20rem;
+      column-gap: 33px;
 
-        &__top {
-          --h: 6vh;
-          --img-s: calc(var(--h) / 1.5);
-          --txt-h: calc(var(--img-s) / 2);
-          height: var(--h);
-          display: grid;
-          grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-          grid-template-areas: 
-            "img author"
-            "img date"
-          ;
-          padding: calc((var(--h) - var(--img-s)) / 2) 0;
-          column-gap: 10px;
+			&::-webkit-scrollbar {
+				width: 8px;
+				background-color: inherit;
+				box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
 
-          &__img {
-            grid-area: img;
-            height: var(--img-s);
-            width: @height;
-            border-radius: 50%;
-            margin: auto;
-          }
+				&-thumb {
+					background-color: #eeeeee;
+				}
+			}
 
-          &__author, &__date {
-            font-size: 15px;
-            line-height: var(--txt-h);
-          }
-
-          &__author {
-            grid-area: author;
-          }
-
-          &__date {
-            grid-area: date;
-          }
-        }
+			&__item {
+				@include Item;
+        margin: auto;
+        width: 344px;
+        overflow: hidden;
+        margin-bottom: 33px;
+        display: inline-block;
 
         &__body {
-          padding: 0 15px;
-          font-weight: 200;
-          margin-bottom: 15px;
-          white-space: pre-line;
-        }
+          padding: 0;
+          height: auto;
+          
+          &__img {
+            width: 100%;
+          }
 
-        &__bottom {
-          --h: 5vh;
-          --item-h: calc(var(--h) / 2);
-          --item-fs: calc(var(--item-h) / 1.5);
-          background-color: #EEEEEE;
-          display: flex;
-          flex-flow: row nowrap;
-          padding: calc((var(--h) - var(--item-h)) / 2) 15px;
-
-          &__btn {
-            --c: #707070;
-            display: flex;
-            flex-flow: row nowrap;
-            text-align: center;
-            -webkit-appearance: none;
-            border: none;
-            background-color: transparent;
-            margin-right: 13px;
-
-            &__icon svg {
-              height: var(--item-h);
-              margin-right: 2.5px;
-              fill: var(--c);
-            }
-
-            &__counter {
-              display: block;
-              height: var(--item-h);
-              width: auto;
-              line-height: calc(var(--item-h) + 1px);
-              font-size: var(--item-fs);
-              color: var(--c);
-            }
- 
+          &__content {
+            padding: 0 15px;
+            margin-top: 32px;
           }
         }
+			}
+		}
+	}
 
+	&__txt {
+		grid-area: txt;
+
+		&__list {
+			display: flex;
+			flex-flow: column nowrap;
+			width: 100%;
+			height: 100%;
+			overflow-y: auto;
+
+			&__item {
+        @include Item;
       }
-    }
-  }
+		}
+	}
 }

@@ -2,20 +2,28 @@ import { combineReducers, Action } from "redux"
 import {
 	POSTS_ARE_LOADING,
 	POSTS_ERRORED,
-	POSTS_LOADED
+	POSTS_LOADED,
+	POST_OPEN
 } from "../actions/post.actions"
-import { Post } from "../dtos/post.dto";
+import { Post, Comment } from "../dtos/post.dto";
+
+interface IOpenPost {
+	post: Post
+	comments: Comment[]
+}
 
 export interface PostsState {
 	error: Error | null
 	loading: boolean
-	list: Post[]
+	list: Post[],
+	currentPost: IOpenPost | null
 }
 
 export const InitialPostsState: PostsState = {
 	error: null,
 	loading: false,
-	list: []
+	list: [],
+	currentPost: null
 }
 
 interface ErrorAction extends Action {
@@ -45,10 +53,28 @@ function _postsReducer(posts: Post[] = [], action: PostsAction) {
 	switch (action.type) {
 		case POSTS_LOADED: return [
 			...posts, ...action.posts.filter(post => 
-				!posts.some(statePost => Object.is(post, statePost))
+				!posts.some(statePost => post._id === statePost._id)
 			)
 		]
+
 		default: return posts
+	}
+}
+
+interface CurrentPostAction extends Action {
+	_id: string
+}
+function currentPostReducer(lastPost: IOpenPost, action: CurrentPostAction) {
+	switch(action.type) {
+		// Load comments
+		case POST_OPEN: {
+			// Get post
+			
+			// Load comments
+			// return post
+		}
+
+		default: return lastPost
 	}
 }
 
@@ -56,5 +82,6 @@ function _postsReducer(posts: Post[] = [], action: PostsAction) {
 export const postsReducer = combineReducers<PostsState>({
 	error: errorReducer,
 	loading: loadingReducer,
-	list: _postsReducer
+	list: _postsReducer,
+	currentPost: currentPostReducer
 })

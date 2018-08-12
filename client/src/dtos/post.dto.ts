@@ -1,4 +1,4 @@
-import { IsDate, IsString, IsInt, IsMongoId, IsBoolean } from "class-validator"
+import { IsDate, IsString, IsInt, IsMongoId, IsBoolean, IsInstance } from "class-validator"
 import mongoose from "mongoose"
 
 export class Comment {
@@ -31,6 +31,7 @@ export class Post {
 	@IsInt()     readonly Likes: number
 	@IsBoolean() readonly Edited: boolean
 	@IsString()  readonly ImageURL?: string
+	@IsInstance(Comment, {each: true}) Comments: Comment[]
 
 	constructor(
 		_id: mongoose.Types.ObjectId,
@@ -39,7 +40,8 @@ export class Post {
 		Content: string,
 		Likes: number,
 		Edited: boolean,
-		ImageURL?: string
+		ImageURL?: string,
+		Comments: Comment[] = []
 	) {
 		this._id = _id
 		this.Author = Author
@@ -48,5 +50,6 @@ export class Post {
 		this.Likes = Likes
 		this.Edited = Edited
 		this.ImageURL = ImageURL
+		this.Comments = Comments
 	}
 }

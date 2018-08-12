@@ -12,6 +12,8 @@ import path from "path"
 import setupDb from "./setupDb"
 
 import { IndexRoute } from "./routes"
+import { ActiveRoute } from "./routes/active"
+import { LogoutRoute } from "./routes/logout"
 setupDb()
 export const app = new ShadowMS(
 	mongoose.connection,
@@ -32,7 +34,10 @@ export const app = new ShadowMS(
 			}
 		})
 	],
-	[IndexRoute],
+	/**
+	 * Keep IndexRoute as the last route, because it's a catch-all to help with react-router.
+	 */
+	[ActiveRoute, LogoutRoute, IndexRoute],
 	[],
 	(err: any) => new Error(err),
 	[CommentSchema, UserSchema, PostSchema], 

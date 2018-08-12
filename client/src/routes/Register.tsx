@@ -1,17 +1,19 @@
 import React, { FormEvent, FormEventHandler } from "react"
-import { NavLink, Redirect } from "react-router-dom"
+import { Redirect, Link } from "react-router-dom"
 import { State } from "../store"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
-import { registerUser } from "../actions/user.actions"
+import { registerUser, setError } from "../actions/user.actions"
 import { UserState } from "../reducers/user.reducer"
 import { FormPart } from "../components/FormPart"
+import FormError from "../components/FormError";
 
 interface Props {
 	user: UserState
 	register: (Username: string, Password: string, Email: string, Name: string) => any
+	setError: (error: Error | null) => any
 }
-const connectedRegister = ({ user, register }: Props) => {
+const connectedRegister = ({ user, register, setError }: Props) => {
 	const handleReg: FormEventHandler = (e: FormEvent) => {
 		e.preventDefault()
 		const Username  = (e.currentTarget.querySelector("#username")         as any).value
@@ -21,19 +23,25 @@ const connectedRegister = ({ user, register }: Props) => {
 		const Name      = (e.currentTarget.querySelector("#full-name")        as any).value
 
 		if (!Username || !Password || !Email || !Name) {
-			alert("Registration Error")
-			throw new Error("Login/ Password/ Email/ Name is undefined")
+			return setError(new Error("You didn't fill all the fields"))
 		}
 
-		if(Password !== cPassword) throw new Error("Passwords don't match")
+		if(Password !== cPassword) {
+			return setError(new Error("Passwords don't match"))
+		}
 
 		register(Username, Password, Email, Name)
+	}
+
+	const clearError = () => {
+		setError(null)
 	}
 
 	if (user.me) return <Redirect to="/" exact />
 	return (
 		<div className="bg">
 			<main className="sign sign--reg">
+				<FormError />
 				<h1 className="sign__title">Register</h1>
 				<form action="" className="sign__form" onSubmit={ handleReg }>
 					<FormPart label="username" type="text" name="username" id="username"/>
@@ -46,10 +54,10 @@ const connectedRegister = ({ user, register }: Props) => {
 				</form>
 				<p className="sign__txt">
 					Already have an account?{" "}
-					<NavLink to="/login" className="sign__txt__link">
+					<Link onClick={ clearError } to="/login" className="sign__txt__link">
 						{" "}
 						Login!
-					</NavLink>
+					</Link>
 				</p>
 			</main>
 		</div>
@@ -66,7 +74,8 @@ const mDispatch = (dispatch: Dispatch) => ({
 		Password &&
 		Email &&
 		Name &&
-		registerUser(`${location.origin}/graphql`, Username, Password, Email, Name)(dispatch)
+		registerUser(`${location.origin}/graphql`, Username, Password, Email, Name)(dispatch),
+	setError: (error: Error | null) => setError(error)(dispatch)
 })
 
 export default connect(

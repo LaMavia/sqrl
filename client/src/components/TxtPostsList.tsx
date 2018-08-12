@@ -7,7 +7,7 @@ import { connect } from "react-redux"
 import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
 import mongoose from "mongoose"
-import ReactSVG from "../../../node_modules/react-svg";
+import ReactSVG from "react-svg";
 
 interface P {
 	authors: {
@@ -39,7 +39,7 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 	render() {
 		return (
 			<section className="posts__txt">
-				<input className="posts__txt__switch" type="checkbox" name="switch" id="switch_txt"/>
+				<input className="posts__txt__switch" type="radio" name="switch" id="switch_txt"/>
 				<ul className="posts__txt__list">
 				{this.props.posts.list.map((post, i) => {
 					const author: User | undefined = this.props.authors.list.find(

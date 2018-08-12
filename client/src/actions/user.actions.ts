@@ -22,7 +22,7 @@ export const userIsLoading = (yayOrNay: boolean) => ({
 	isLoading: yayOrNay
 })
 
-export const userErrored = (error: Error) => ({
+export const userErrored = (error: Error | null) => ({
 	type: USER_ERRORED,
 	error
 })
@@ -85,15 +85,18 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 		`, {}, apiURL)
 			.then(res => res.json())
 			.then(({data}) => {
-				dispatch(userLoaded(data.Login))
-				return data.Login
+				if(data.Login) { // Found matching user
+					dispatch(userLoaded(data.Login))
+					return data.Login
+				}
+				throw new Error(`Username "${username}" doesn't match the password`)
 			})
 			.then(({_id}) => {
 				const d = new Date()
 				d.setTime(d.getTime() + 7*24*60*60*1000)
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
-			.catch(err => dispatch(userErrored(new Error(err))))
+			.catch(err => dispatch(userErrored(err)))
 			.finally(() => dispatch(userIsLoading(false)))
 	}
 
@@ -163,16 +166,29 @@ export const registerUser = (apiURL: string, Username: string, Password: string,
 			.then(res => res.json())
 			.then(({data}) => {
 				if(!data.userAdd) { // Returned null - user is taken
-					throw "Username / Email already taken"
+					throw new Error("Username / Email already taken")
 				}
-				dispatch(userLoaded(data.userAdd))
-				return data.userAdd
+				if(data.userAdd && typeof data.userAdd === "object") {
+					dispatch(userLoaded(data.userAdd))
+					return data.userAdd
+				}
+				return {}
 			})
 			.then(({_id}) => {
-				const d = new Date()
-				d.setTime(d.getTime() + 7*24*60*60*1000)
-				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
+				debugger
+				if(_id) {
+					const d = new Date()
+					d.setTime(d.getTime() + 7*24*60*60*1000)
+					document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
+				} else {
+					alert(`Check your email ${Email} for the activation link!`)
+				}	
 			})
-			.catch(err => dispatch(userErrored(new Error(err))))
+			.catch(err => dispatch(userErrored(err)))
 			.finally(() => dispatch(userIsLoading(false)))
 	}
+
+export const setError = 
+	(error: Error | null) => 
+	(dispatch: Dispatch) => 
+	dispatch(userErrored(error))

@@ -13,7 +13,7 @@ export function authorsReducer(authors: User[] = [], action: AuthorsAction) {
   switch(action.type) {
     case AUTHORS_LOADED: return [
 			...authors, ...(action.authors || []).filter(author => 
-				!authors.some(stateAuthor => Object.is(author, stateAuthor))
+				!authors.some(stateAuthor => stateAuthor._id === author._id)
 			)
     ]
     default: return authors

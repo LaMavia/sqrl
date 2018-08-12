@@ -83,11 +83,11 @@ addMockFunctionsToSchema({
 
 export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 	Mutation: {
-		userAdd: async (_root, { Name, Username, Password, Email }) => {
+		userAdd: async (_root, { Name, Username, Password, Email, Activate }) => {
       const isTaken = Shadow.data["User"]
         .some((dUser: any) => dUser.Username === Username || dUser.Email === Email)
-      if(isTaken) return null
-			return await Shadow.AddToDB("User", {
+			if(isTaken) return null
+			const modelProps = {
 				Name,
 				Username,
 				Password: await hash(Password),
@@ -95,9 +95,18 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 				ProfileImageURL: "",
 				BackgroundImageURL: "",
 				Followers: []
-			}).catch(err => {
-				throw new Error(err)
-			})
+			}
+			if(Activate) { // Force account activation i.e. Testing
+				return await Shadow.AddToDB("User", modelProps)
+					.catch(err => {
+						throw new Error(err)
+					})
+			}
+
+			const id = mongoose.Types.ObjectId.createFromTime(new Date().getUTCSeconds())
+			Shadow.data.nonActiveUsers[String(id)] = modelProps
+			Shadow.SendRegConfirm(modelProps.Email, String(id))
+			return true
 		},
 		userUpdate: async (_root, args) => {
 			if (!args._id) throw new Error("_id not specified")

@@ -1,118 +1,149 @@
-@import "./_breakpoints.pcss";
+@import './_breakpoints.pcss';
 
 :root {
-  --sign-w: 27.9375rem;
+	--sign-w: 27.9375rem;
+	--form-pd: 70px;
+	--form-item-h: 47px;
+  --sign-title-fs: 25px;
+  --sign-title-t: 25px;
 }
 
 .bg {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: linear-gradient(to bottom left, #059D8E, #A7FFA7);
-  overflow-y: auto;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background-image: linear-gradient(to bottom left, #059d8e, #a7ffa7);
+	overflow-y: auto;
 }
 
 .sign {
-  position: absolute;
-  width: var(--sign-w);
-  height: auto;
-  right: 50%;
-  top: 50%;
-  transform: translate(calc(50% + var(--nav-w) / 2), -50%);
-  background-color: #ffffff;
-  box-shadow: 0 3px 6px -2px rgba(0, 0, 0, 0.16);
-  display: flex;
-  flex-flow: column nowrap;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #707070;
-  z-index: 2;
+	position: absolute;
+	width: var(--sign-w);
+	height: auto;
+	right: 50%;
+	top: 50%;
+	transform: translate(calc(50% + var(--nav-w) / 2), -50%);
+	background-color: #ffffff;
+	box-shadow: 0 3px 6px -2px rgba(0, 0, 0, 0.16);
+	display: flex;
+	flex-flow: column nowrap;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: #707070;
+	z-index: 2;
 
-  @include phone {
-    min-height: calc(100% - var(--nav-phone-h));
-    --sign-w: 100%;
-    left: 0;
-    top: 0;
-    transform: translate(0, 0);
-    margin-bottom: var(--nav-phone-h);
-  }
+	@include phone {
+		min-height: calc(100% - var(--nav-phone-h));
+		--sign-w: 100%;
+		left: 0;
+		top: 0;
+		transform: translate(0, 0);
+		margin-bottom: var(--nav-phone-h);
+	}
 
-  &__title {
-    font-size: 25px;
-    font-weight: 100;
-    text-transform: uppercase;
-    text-align: center;
-    margin-top: 25px;
-    margin-bottom: 91px;
-
-    @include phone {
-      margin-bottom: 6vh;
-    }
-  }
-
-  &__form {
-    padding: 0 70px;
+	&__error {
+    position: fixed;
+		width: 100%;
+		min-height: var(--form-item-h);
+    vertical-align: middle;
+		background-color: #ff7070;
+		animation: showup 0.2s 0s ease-out;
     display: flex;
-    flex-flow: column nowrap;
-    overflow-y: visible;
-    --item-h: 47px;
+    justify-content: center;
+    flex-direction: column;
+    overflow-x: hidden;
+    padding: 2%;
 
-    @include phone {
-      padding: 0 33px;
-    }
-
-    &__part {
-      width: 100%;
-      display: flex;
-      flex-flow: column nowrap;
-      margin-bottom: 27px;
-
-      &:last-of-type {
-        margin-bottom: 70px;
-      }
-
-      &__label {
-        font-size: 13px;
-        text-transform: capitalize;
-        padding-left: 10px;
-      }
-
-      &__input {
-        
-        border: none;
-        background-color: inherit !important;
-        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
-        height: var(--item-h);
-        font-size: calc(var(--item-h) / 3);
-        padding: 0 5%;
-      }
-    }
-
-    &__submit {
-      background-color: #009688;
-      text-align: center;
-      font-size: 15px;
-      justify-content: baseline;
-      height: var(--item-h);
+    &__txt {
       color: #ffffff;
-      font-weight: bold;
-      border: none;
-      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
-      margin-bottom: 108px;
+      text-align: center;
+      word-wrap: break-word;
     }
-  }
+	}
 
-  &__txt {
-    position: absolute;
-    bottom: 36px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 100%;
+	&__title {
+		font-size: var(--sign-title-fs);
+		font-weight: 100;
+		text-transform: uppercase;
+		text-align: center;
+		margin-top: var(--sign-title-t);
+		margin-bottom: 91px;
 
-    &__link {
-      color: #00EEFF;
-    }
-  }
+		@include phone {
+			margin-bottom: 6vh;
+		}
+	}
+
+	&__form {
+		padding: 0 var(--form-pd);
+		display: flex;
+		flex-flow: column nowrap;
+		overflow-y: visible;
+
+		@include phone {
+			--form-pd: 33px;
+		}
+
+		&__part {
+			width: 100%;
+			display: flex;
+			flex-flow: column nowrap;
+			margin-bottom: 27px;
+
+			&:last-of-type {
+				margin-bottom: 70px;
+			}
+
+			&__label {
+				font-size: 13px;
+				text-transform: capitalize;
+				padding-left: 10px;
+			}
+
+			&__input {
+				border: none;
+				background-color: inherit !important;
+				box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+				height: var(--form-item-h);
+				font-size: calc(var(--form-item-h) / 3);
+				padding: 0 5%;
+			}
+		}
+
+		&__submit {
+			background-color: #009688;
+			text-align: center;
+			font-size: 15px;
+			justify-content: baseline;
+			height: var(--form-item-h);
+			color: #ffffff;
+			font-weight: bold;
+			border: none;
+			box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+			margin-bottom: 108px;
+		}
+	}
+
+	&__txt {
+		position: absolute;
+		bottom: 36px;
+		left: 50%;
+		transform: translateX(-50%);
+		text-align: center;
+		width: 100%;
+
+		&__link {
+			color: #00eeff;
+		}
+	}
+}
+
+@keyframes showup {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(0%);
+	}
 }
