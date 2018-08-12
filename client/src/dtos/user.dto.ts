@@ -25,6 +25,7 @@ export class User {
 	@IsUrl() readonly ProfileImageURL: string
 	@IsUrl() readonly BackgroundImageURL: string
 	@IsMongoId({each: true}) readonly Followers: mongoose.Schema.Types.ObjectId[]
+	@IsMongoId({each: true}) readonly LikedPosts: mongoose.Schema.Types.ObjectId[]
 
 	constructor(
 		_id: mongoose.Schema.Types.ObjectId,
@@ -34,7 +35,8 @@ export class User {
 		Email: string,
 		ProfileImageURL: string,
 		BackgroundImageURL: string,
-		Followers: mongoose.Schema.Types.ObjectId[]
+		Followers: mongoose.Schema.Types.ObjectId[],
+		LikedPosts: mongoose.Schema.Types.ObjectId[]
 	) {
 		this._id = _id
 		this.Name = Name
@@ -44,5 +46,6 @@ export class User {
 		this.ProfileImageURL = ProfileImageURL
 		this.BackgroundImageURL = BackgroundImageURL
 		this.Followers = Followers
+		this.LikedPosts = LikedPosts
 	}
 }

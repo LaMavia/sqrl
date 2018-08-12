@@ -8,6 +8,7 @@ import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
 import mongoose from "mongoose"
 import ReactSVG from "react-svg";
+import PostBtns from "./PostBtns";
 
 interface P {
 	authors: {
@@ -64,16 +65,10 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 							<p className="posts__txt__list__item__body">
 								{ post.Content }
 							</p>
-							<div className="posts__txt__list__item__bottom">
-								<button className="posts__txt__list__item__bottom__btn posts__txt__list__item__bottom__btn--likes">
-									<ReactSVG path="/svg/thumb_up.svg" className="posts__txt__list__item__bottom__btn__icon"/>
-									<p className="posts__txt__list__item__bottom__btn__counter">{ post.Likes }</p>
-								</button>
-								<button className="posts__txt__list__item__bottom__btn posts__txt__list__item__bottom__btn--comments">
-									<ReactSVG path="/svg/comment.svg" className="posts__txt__list__item__bottom__btn__icon"/>
-									<p className="posts__txt__list__item__bottom__btn__counter">0</p>
-								</button>
-							</div>
+							<PostBtns post={post} 
+								onLikesClicked={() => { }} 
+								onCommentsClicked={() => { }} 
+							/>
 						</li>
 					)
 				})}

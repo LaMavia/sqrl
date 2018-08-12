@@ -36,6 +36,7 @@ export default class Shadow {
 	data: Data
 	_env: string
 	mail: Mail
+	stdin: NodeJS.Socket
 
 	constructor(
 		dbConnection: mongoose.Connection, 
@@ -90,6 +91,25 @@ export default class Shadow {
 		)
 
 		this.Init()
+
+		this.stdin = process.openStdin()
+		this.stdin.addListener("data", this.inputHandler.bind(this))
+	}
+
+	inputHandler(_d: any) {
+		const d = String(_d).trim()
+		;(function () {
+			// @ts-ignore
+			function print(txt: any, ...args) {
+				console.dir(txt, {colors: true, depth: 8, ...args})
+			}
+			try{
+				print(eval(d))
+			}
+			catch (e) {
+				print(e)
+			}
+		}).bind(this)()
 	}
 
 	private InitApollo(graphqlSchemas: GraphQLSchema[], graphqlResolvers: iShadow.ResolverConstruct<any, any>[]) {
@@ -186,8 +206,7 @@ export default class Shadow {
 
 		this.InitRoutes()
 		this.InitErrorHandler()
-		console.info("\x1b[36m%s\x1b[0m"," Ready for Action 👊")
-		
+		console.info("\x1b[36m%s\x1b[0m"," Ready for Action 👊")	
 	}
 
 	GetFromCache(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {

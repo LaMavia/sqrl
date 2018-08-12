@@ -5,18 +5,13 @@ import {
 	POSTS_LOADED,
 	POST_OPEN
 } from "../actions/post.actions"
-import { Post, Comment } from "../dtos/post.dto";
-
-interface IOpenPost {
-	post: Post
-	comments: Comment[]
-}
+import { Post } from "../dtos/post.dto";
 
 export interface PostsState {
 	error: Error | null
 	loading: boolean
 	list: Post[],
-	currentPost: IOpenPost | null
+	currentPost: Post | null
 }
 
 export const InitialPostsState: PostsState = {
@@ -29,7 +24,7 @@ export const InitialPostsState: PostsState = {
 interface ErrorAction extends Action {
 	error: Error
 }
-function errorReducer(error = null, action: ErrorAction) {
+function errorReducer(error: Error | null = null, action: ErrorAction) {
 	switch(action.type) {
 		case POSTS_ERRORED: return action.error
 		default: return error
@@ -62,23 +57,19 @@ function _postsReducer(posts: Post[] = [], action: PostsAction) {
 }
 
 interface CurrentPostAction extends Action {
-	_id: string
+	post: Post
 }
-function currentPostReducer(lastPost: IOpenPost, action: CurrentPostAction) {
+function currentPostReducer(lastPost: Post | null = null, action: CurrentPostAction) {
 	switch(action.type) {
 		// Load comments
 		case POST_OPEN: {
-			// Get post
-			
-			// Load comments
-			// return post
+			return action.post
 		}
 
 		default: return lastPost
 	}
 }
 
-// @ts-ignore
 export const postsReducer = combineReducers<PostsState>({
 	error: errorReducer,
 	loading: loadingReducer,

@@ -476,51 +476,6 @@ html, body {
 		white-space: pre-line;
 	}
 
-.posts__img__list__item__bottom {
-		--h: 5vh;
-		--item-h: calc(var(--h) / 2);
-		--item-h: calc(var(--h) / 2);
-		--item-fs: calc(var(--item-h) / 1.5);
-		--item-fs: calc(var(--item-h) / 1.5);
-		background-color: #eeeeee;
-		display: flex;
-		flex-flow: row nowrap;
-		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
-		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
-	}
-
-.posts__img__list__item__bottom__btn {
-			--c: #707070;
-			display: flex;
-			flex-flow: row nowrap;
-			text-align: center;
-			-webkit-appearance: none;
-			border: none;
-			background-color: transparent;
-			margin-right: 13px;
-		}
-
-.posts__img__list__item__bottom__btn__icon svg {
-				height: var(--item-h);
-				height: var(--item-h);
-				margin-right: 2.5px;
-				fill: var(--c);
-				fill: var(--c);
-			}
-
-.posts__img__list__item__bottom__btn__counter {
-				display: block;
-				height: var(--item-h);
-				height: var(--item-h);
-				width: auto;
-				line-height: calc(var(--item-h) + 0.0625rem);
-				line-height: calc(var(--item-h) + 1px);
-				font-size: var(--item-fs);
-				font-size: var(--item-fs);
-				color: var(--c);
-				color: var(--c);
-			}
-
 .posts__img__list__item__body {
           padding: 0;
           height: auto;
@@ -607,7 +562,7 @@ html, body {
 		white-space: pre-line;
 	}
 
-.posts__txt__list__item__bottom {
+:root .btns {
 		--h: 5vh;
 		--item-h: calc(var(--h) / 2);
 		--item-h: calc(var(--h) / 2);
@@ -620,7 +575,7 @@ html, body {
 		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
 	}
 
-.posts__txt__list__item__bottom__btn {
+:root .btns__btn {
 			--c: #707070;
 			display: flex;
 			flex-flow: row nowrap;
@@ -629,9 +584,10 @@ html, body {
 			border: none;
 			background-color: transparent;
 			margin-right: 13px;
+      cursor: pointer;
 		}
 
-.posts__txt__list__item__bottom__btn__icon svg {
+:root .btns__btn__icon svg {
 				height: var(--item-h);
 				height: var(--item-h);
 				margin-right: 2.5px;
@@ -639,7 +595,7 @@ html, body {
 				fill: var(--c);
 			}
 
-.posts__txt__list__item__bottom__btn__counter {
+:root .btns__btn__counter {
 				display: block;
 				height: var(--item-h);
 				height: var(--item-h);

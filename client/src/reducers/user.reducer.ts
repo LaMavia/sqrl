@@ -17,9 +17,9 @@ export const InitialUserState: UserState = {
 }
 
 interface ErrorAction extends Action {
-	error: Error
+	error: Error | null
 }
-function errorReducer(error = null, action: ErrorAction) {
+function errorReducer(error: Error | null = null, action: ErrorAction) {
   switch(action.type) {
     case USER_ERRORED: return action.error
     default: return error
@@ -37,7 +37,6 @@ function _userReducer(user: User | null = null, action: UserAction) {
   }
 }
 
-// @ts-ignore
 export const userReducer = combineReducers<UserState>({
   error: errorReducer,
   me: _userReducer

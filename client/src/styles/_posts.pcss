@@ -51,42 +51,6 @@
 		margin-bottom: 15px;
 		white-space: pre-line;
 	}
-
-	&__bottom {
-		--h: 5vh;
-		--item-h: calc(var(--h) / 2);
-		--item-fs: calc(var(--item-h) / 1.5);
-		background-color: #eeeeee;
-		display: flex;
-		flex-flow: row nowrap;
-		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
-
-		&__btn {
-			--c: #707070;
-			display: flex;
-			flex-flow: row nowrap;
-			text-align: center;
-			-webkit-appearance: none;
-			border: none;
-			background-color: transparent;
-			margin-right: 13px;
-
-			&__icon svg {
-				height: var(--item-h);
-				margin-right: 2.5px;
-				fill: var(--c);
-			}
-
-			&__counter {
-				display: block;
-				height: var(--item-h);
-				width: auto;
-				line-height: calc(var(--item-h) + 1px);
-				font-size: var(--item-fs);
-				color: var(--c);
-			}
-		}
-	}
 }
 
 .home {

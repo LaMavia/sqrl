@@ -72,6 +72,7 @@ export const UserSchema: GraphQLSchema = makeExecutableSchema({
 			ProfileImageURL: String
 			BackgroundImageURL: String
 			Followers: [ID]
+			LikedPosts: [ID]
 		}
 	`
 })

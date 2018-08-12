@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 import { State } from '../store';
-import { Post, Comment } from '../dtos/post.dto';
+import { Post } from '../dtos/post.dto';
+import { Comment } from '../dtos/comment.dto';
 import { User } from '../dtos/user.dto';
+import PostBtns from './PostBtns';
 
 interface P {
   post: Post
@@ -11,7 +13,9 @@ interface P {
 }
 
 class ImgPost extends PureComponent<P> {
-
+  constructor(props: P) {
+    super(props)
+  }
   /**
    * @todo Add Loader
    */
@@ -37,7 +41,10 @@ class ImgPost extends PureComponent<P> {
           }
         </main>
         <div className="post__stats">
-          
+          <PostBtns post={this.props.post} 
+            onLikesClicked={() => { }} 
+            onCommentsClicked={() => { }} 
+          />
         </div>
       </article>
     )
@@ -45,12 +52,13 @@ class ImgPost extends PureComponent<P> {
 }
 
 const mstp = (state: State) => ({
-  post: state.posts.currentPost ? state.posts.currentPost.post : {},
-  comments: state.posts.currentPost ? state.posts.currentPost.comments : [],
+  post: state.posts.currentPost ? state.posts.currentPost : {},
+  comments: state.posts.currentPost ? [] : [],
   author: state.posts.currentPost ? 
     // @ts-ignore
     state.authors.find(sa => String(sa._id) === String(state.posts.currentPost.post.Author))
     : {}
 })
 
+// @ts-ignore
 export default connect(mstp)(ImgPost)
