@@ -13,8 +13,6 @@ html, body {
 .app {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-flow: row nowrap;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -27,6 +25,7 @@ html, body {
 }
 
 .nav {
+  position: fixed;
   z-index: 100;
   width: 60px;
   width: var(--nav-w);
@@ -345,9 +344,17 @@ html, body {
 
 .home {
 	width: 100%;
-	padding: 33px 33px 0 33px;
+	padding: 33px 33px 0 calc(33px + 60px);
+	padding: 33px 33px 0 calc(33px + var(--nav-w));
 	height: 100vh;
 	overflow: hidden;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .home {
+    padding-left: 33px;
+  }
 }
 
 .posts {
@@ -425,50 +432,6 @@ html, body {
         display: inline-block;
 }
 
-.posts__img__list__item__top {
-		--h: 6vh;
-		--img-s: calc(var(--h) / 1.5);
-		--img-s: calc(var(--h) / 1.5);
-		--txt-h: calc(var(--img-s) / 2);
-		--txt-h: calc(var(--img-s) / 2);
-		height: var(--h);
-		height: var(--h);
-		display: grid;
-		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-		grid-template-areas:
-			'img author'
-			'img date';
-		padding: calc((var(--h) - var(--img-s)) / 2) 0;
-		padding: calc((var(--h) - var(--img-s)) / 2) 0;
-		column-gap: 10px;
-    padding-left: 15px;
-	}
-
-.posts__img__list__item__top__img {
-			grid-area: img;
-			height: var(--img-s);
-			height: var(--img-s);
-			width: var(--img-s);
-			border-radius: 50%;
-			margin: auto;
-		}
-
-.posts__img__list__item__top__author,
-		.posts__img__list__item__top__date {
-			font-size: 0.9375rem;
-			line-height: var(--txt-h);
-			line-height: var(--txt-h);
-		}
-
-.posts__img__list__item__top__author {
-			grid-area: author;
-		}
-
-.posts__img__list__item__top__date {
-			grid-area: date;
-		}
-
 .posts__img__list__item__body {
 		padding: 0 15px;
 		font-weight: 200; 
@@ -511,56 +474,91 @@ html, body {
 	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
       }
 
-.posts__txt__list__item__top {
-		--h: 6vh;
-		--img-s: calc(var(--h) / 1.5);
-		--img-s: calc(var(--h) / 1.5);
-		--txt-h: calc(var(--img-s) / 2);
-		--txt-h: calc(var(--img-s) / 2);
-		height: var(--h);
-		height: var(--h);
-		display: grid;
-		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-		grid-template-areas:
-			'img author'
-			'img date';
-		padding: calc((var(--h) - var(--img-s)) / 2) 0;
-		padding: calc((var(--h) - var(--img-s)) / 2) 0;
-		column-gap: 10px;
-    padding-left: 15px;
-	}
-
-.posts__txt__list__item__top__img {
-			grid-area: img;
-			height: var(--img-s);
-			height: var(--img-s);
-			width: var(--img-s);
-			border-radius: 50%;
-			margin: auto;
-		}
-
-.posts__txt__list__item__top__author,
-		.posts__txt__list__item__top__date {
-			font-size: 0.9375rem;
-			line-height: var(--txt-h);
-			line-height: var(--txt-h);
-		}
-
-.posts__txt__list__item__top__author {
-			grid-area: author;
-		}
-
-.posts__txt__list__item__top__date {
-			grid-area: date;
-		}
-
 .posts__txt__list__item__body {
 		padding: 0 15px;
 		font-weight: 200; 
 		margin-bottom: 15px;
 		white-space: pre-line;
 	}
+
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 60px;
+  left: var(--nav-w);
+  width: calc(100vw - calc(60px / 2));
+  width: calc(100vw - var(--nav-item-s));
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .modal {
+    height: calc(100vh - var(--nav-h));
+    height: calc(100vh - var(--nav-h));
+    width: 100vw;
+    left: 0;
+    bottom: var(--nav-h);
+    bottom: var(--nav-h);
+  }
+}
+
+.modal__click-catcher {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+:root {
+	--post-h: 60vh;
+	--post-aside-w: 20rem;
+	--post-body-h: auto;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	:root {
+		--post-aside-w: 100vw;
+	}
+  }
+
+.post {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: 60vh;
+	height: var(--post-h);
+	width: auto;
+	display: flex;
+	flex-flow: row nowrap;
+	background-color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.post__img {
+		height: 100%;
+		width: auto;
+	}
+
+.post__aside {
+		width: 20rem;
+		width: var(--post-aside-w);
+	}
+
+.post__aside .btns {
+			background-color: transparent !important;
+		}
+
+.post__aside__body {
+			width: 100%;
+			padding: 0 15px;
+			overflow: hidden;
+      margin: 15px 0 6px 0;
+		}
 
 :root .btns {
 		--h: 5vh;
@@ -607,3 +605,51 @@ html, body {
 				color: var(--c);
 				color: var(--c);
 			}
+
+:root {
+  --und-h: 6vh;
+}
+
+.und {
+	--und-h: 6vh;
+	--img-s: calc(6vh / 1.5);
+	--img-s: calc(var(--und-h) / 1.5);
+	--txt-h: calc(var(--img-s) / 2);
+	--txt-h: calc(var(--img-s) / 2);
+	height: 6vh;
+	height: var(--und-h);
+	display: grid;
+	grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
+	grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
+	grid-template-areas:
+		'img author'
+		'img date';
+	padding: calc((6vh - var(--img-s)) / 2) 0;
+	padding: calc((var(--und-h) - var(--img-s)) / 2) 0;
+	column-gap: 10px;
+	padding-left: 15px;
+}
+
+.und__img {
+		grid-area: img;
+		height: var(--img-s);
+		height: var(--img-s);
+		width: var(--img-s);
+		border-radius: 50%;
+		margin: auto;
+	}
+
+.und__author,
+	.und__date {
+		font-size: 0.9375rem;
+		line-height: var(--txt-h);
+		line-height: var(--txt-h);
+	}
+
+.und__author {
+		grid-area: author;
+	}
+
+.und__date {
+		grid-area: date;
+	}

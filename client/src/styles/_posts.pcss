@@ -8,43 +8,6 @@
 	background-color: #ffffff;
 	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
 
-	&__top {
-		--h: 6vh;
-		--img-s: calc(var(--h) / 1.5);
-		--txt-h: calc(var(--img-s) / 2);
-		height: var(--h);
-		display: grid;
-		grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-		grid-template-areas:
-			'img author'
-			'img date';
-		padding: calc((var(--h) - var(--img-s)) / 2) 0;
-		column-gap: 10px;
-    padding-left: 15px;
-
-		&__img {
-			grid-area: img;
-			height: var(--img-s);
-			width: @height;
-			border-radius: 50%;
-			margin: auto;
-		}
-
-		&__author,
-		&__date {
-			font-size: 15px;
-			line-height: var(--txt-h);
-		}
-
-		&__author {
-			grid-area: author;
-		}
-
-		&__date {
-			grid-area: date;
-		}
-	}
-
 	&__body {
 		padding: 0 15px;
 		font-weight: 200; 
@@ -56,9 +19,13 @@
 .home {
 	$p: 33px;
 	width: 100%;
-	padding: $p $p 0 $p;
+	padding: $p $p 0 calc($p + var(--nav-w));
 	height: 100vh;
 	overflow: hidden;
+
+	@include phone {
+		padding-left: $p;
+	}
 }
 
 .posts {

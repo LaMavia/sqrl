@@ -7,8 +7,8 @@ import { connect } from "react-redux"
 import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
 import mongoose from "mongoose"
-import ReactSVG from "react-svg";
 import PostBtns from "./PostBtns";
+import UserAndDate from "./UserAndDate";
 
 interface P {
 	authors: {
@@ -49,19 +49,7 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 					const d = new Date(post.Date)
 					return (
 						<li className="posts__txt__list__item" key={i}>
-							<div className="posts__txt__list__item__top">
-								<img
-									src={author && author.ProfileImageURL}
-									alt=""
-									className="posts__txt__list__item__top__img"
-								/>
-								<p className="posts__txt__list__item__top__author">
-									{ author && author.Name }
-								</p>
-								<p className="posts__txt__list__item__top__date">
-									{post && `${d.getDate() < 10 ? "0" + d.getDate() : d.getDate()}.${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}.${d.getFullYear()}`}
-								</p>
-							</div>
+							<UserAndDate user={ author as User } date={ d } />
 							<p className="posts__txt__list__item__body">
 								{ post.Content }
 							</p>

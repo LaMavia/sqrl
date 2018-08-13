@@ -1,0 +1,46 @@
+@import './_breakpoints.pcss';
+
+:root {
+	--post-h: 60vh;
+	--post-aside-w: 20rem;
+	--post-body-h: auto;
+}
+
+@include phone {
+	:root {
+		--post-aside-w: 100vw;
+	}
+}
+
+.post {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: var(--post-h);
+	width: auto;
+	display: flex;
+	flex-flow: row nowrap;
+	background-color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+	&__img {
+		height: 100%;
+		width: auto;
+	}
+
+	&__aside {
+		width: var(--post-aside-w);
+
+		.btns {
+			background-color: transparent !important;
+		}
+
+		&__body {
+			width: 100%;
+			padding: 0 15px;
+			overflow: hidden;
+      margin: 15px 0 6px 0;
+		}
+	}
+}

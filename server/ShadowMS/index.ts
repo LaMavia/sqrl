@@ -222,8 +222,10 @@ export default class Shadow {
 					const [cVal, xVal] = [conditions[prop], x[prop]]
 					if(Array.isArray(cVal) && Array.isArray(xVal)) {
 						likeIt = cVal.sort().toString() === xVal.sort().toString()
+					} else if(cVal._bsontype === "ObjectID" && xVal._bsontype === "ObjectID") {
+						likeIt = String(cVal) === String(xVal)
 					} else if(typeof cVal === "object" && typeof xVal === "object") {
-						likeIt = cVal.sort().toString() === xVal.sort().toString()
+						likeIt = Object.is(cVal, xVal)
 					} else if(typeof cVal !== typeof xVal) {
 						likeIt = !!(String(cVal) === String(xVal))
 					} else likeIt = cVal === xVal

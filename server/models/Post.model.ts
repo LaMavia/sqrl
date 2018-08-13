@@ -54,7 +54,7 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   Query: {
     Post: async (_root, args) => {
       const res = await Shadow.GetFromDB("Post", objectifyObjectsId(args), 1)
-      return prepare(res[0]) || null
+      return prepare(Array.isArray(res) ? res[0] : res) || null
     },
     Posts: async (_root, args) => {
       const { Limit } = args

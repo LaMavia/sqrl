@@ -1,5 +1,4 @@
 import ShadowMS from "./ShadowMS"
-import mongoose from "mongoose"
 import { Comment, CommentSchema, CommentResolver } from "./models/Comment.model"
 import { User, UserSchema, UserResolver } from "./models/User.model"
 import { Post, PostSchema, PostResolver } from "./models/Post.model"
@@ -10,10 +9,12 @@ import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 import path from "path"
 import setupDb from "./setupDb"
+import mongoose from "mongoose"
 
 import { IndexRoute } from "./routes"
 import { ActiveRoute } from "./routes/active"
 import { LogoutRoute } from "./routes/logout"
+
 setupDb()
 export const app = new ShadowMS(
 	mongoose.connection,
@@ -39,7 +40,7 @@ export const app = new ShadowMS(
 	 */
 	[ActiveRoute, LogoutRoute, IndexRoute],
 	[],
-	(err: any) => new Error(err),
+	(err: any) => console.dir(new Error(err), { colors: true }),
 	[CommentSchema, UserSchema, PostSchema], 
 	[CommentResolver, UserResolver, PostResolver]
 )

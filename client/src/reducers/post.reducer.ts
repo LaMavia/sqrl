@@ -3,22 +3,25 @@ import {
 	POSTS_ARE_LOADING,
 	POSTS_ERRORED,
 	POSTS_LOADED,
-	POST_OPEN
+	POST_OPEN,
+	POST_LOADED
 } from "../actions/post.actions"
 import { Post } from "../dtos/post.dto";
 
 export interface PostsState {
 	error: Error | null
 	loading: boolean
-	list: Post[],
-	currentPost: Post | null
+	list: Post[]
+	currentPost: Post | null,
+	open: boolean
 }
 
 export const InitialPostsState: PostsState = {
 	error: null,
 	loading: false,
 	list: [],
-	currentPost: null
+	currentPost: null,
+	open: false
 }
 
 interface ErrorAction extends Action {
@@ -62,11 +65,19 @@ interface CurrentPostAction extends Action {
 function currentPostReducer(lastPost: Post | null = null, action: CurrentPostAction) {
 	switch(action.type) {
 		// Load comments
-		case POST_OPEN: {
-			return action.post
-		}
+		case POST_LOADED: return action.post
 
 		default: return lastPost
+	}
+}
+
+interface OpenPostAction extends Action {
+	open: boolean
+}
+function openPostReducer(wasOpen: boolean = false, action: OpenPostAction) {
+	switch(action.type) {
+		case POST_OPEN: return action.open
+		default: return wasOpen
 	}
 }
 
@@ -74,5 +85,6 @@ export const postsReducer = combineReducers<PostsState>({
 	error: errorReducer,
 	loading: loadingReducer,
 	list: _postsReducer,
-	currentPost: currentPostReducer
+	currentPost: currentPostReducer,
+	open: openPostReducer
 })
