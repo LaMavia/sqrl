@@ -13,6 +13,7 @@ import prepare from "../ShadowMS/functions/prepare"
 import { isNullOrUndefined } from "util"
 import objectifyObjectsId from "../ShadowMS/functions/objectifyObjectsId"
 import sharedTypes from "./sharedTypes"
+import { extract } from "../ShadowMS/functions/extract";
 
 export const UserDBSchema = new mongoose.Schema({
 	Name: String,
@@ -31,7 +32,6 @@ export const UserSchema: GraphQLSchema = makeExecutableSchema({
 		type Query {
 			User(_id: ID, Name: String, Username: String, Email: String): User
 			Users(Ids: [ID], _id: ID, Name: String, Username: String, Email: String): [User]
-			AllUsers: [User]
 			Login(Username: String!, Password: String!): User
 			LoginWithID(_id: ID!): User
 		}
@@ -62,18 +62,6 @@ export const UserSchema: GraphQLSchema = makeExecutableSchema({
 		}
 
 		${sharedTypes}
-
-		type User {
-			_id: ID
-			Name: String!
-			Username: String!
-			Password: String!
-			Email: String!
-			ProfileImageURL: String
-			BackgroundImageURL: String
-			Followers: [ID]
-			LikedPosts: [ID]
-		}
 	`
 })
 
@@ -128,7 +116,7 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 					"No conditions specified in userDelete. Prevented deleting all users."
 				)
 			}
-			if (args._id) args._id = mongoose.Types.ObjectId(args._id)
+			objectifyObjectsId(args)
 			const { Many } = args
 			if (typeof args.Many !== "undefined") delete args.Many
 			return await Shadow.DeleteFromDB("User", args, !!Many).then(
@@ -137,47 +125,93 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 		}
 	},
 	Query: {
-		User: async (_root, args) => {
+		async User(_root, args) {
 			args = objectifyObjectsId(args)
 			const res = await Shadow.GetFromDB("User", args, 1)
-			return prepare(res[0]) || null
+			if(res) {
+				const user = prepare(extract(res))
+				let followers = []
+				for (const id of user.Followers.map(String)) {
+					// @ts-ignore
+					const follower = prepare(extract(await Shadow.GetFromDB('User', {
+						_id: id,
+					})))
+
+					followers.push(follower)
+				}
+
+				const out = Object.assign({}, user, { Followers: followers })
+				return out || null
+			}
+			return null
 		},
 		Users: async (_root, args) => {
 			args = objectifyObjectsId(args)
 			let res
-			if(args.Ids) {
+			if (args.Ids) {
 				const argsCopy = Object.assign({}, args)
-				delete argsCopy.Ids 
+				delete argsCopy.Ids
 				res = []
-				for(const _id of args.Ids) {
-					res.push( await Shadow.GetFromDB("User", { _id, ...argsCopy }, 1) )
+				for (const _id of args.Ids) {
+					const user = extract(await Shadow.GetFromDB("User", { _id, ...argsCopy }, 1))
+					const followers = []
+					for (const id of user.Followers.map(String)) {
+						const follower = prepare(extract(await Shadow.GetFromDB('User', {
+							_id: id,
+						})))
+						followers.push(follower)
+					}
+					res.push(
+						Object.assign({}, user._doc, { Followers: followers })
+					)
 				}
 			} else {
-				res = await Shadow.GetFromDB("User", args)
+				res = prepare(await Shadow.GetFromDB("User", args))
 			}
 			
 			return res.map(prepare)
 		},
-		AllUsers: async (_root, args) => {
-			if (args._id) args._id = mongoose.Types.ObjectId(args._id)
-			return await Shadow.GetFromDB("User", args)
-		},
 		Login: async (_root, {Username, Password}) => {
 			const users = await Shadow.GetFromDB("User", { Username })
 			if(!users || users.length < 1) return null
-			const user = users[0]
+			const user = extract(users)
 			const samePassword = await bcrypt.compare(Password, user.Password)
+
+
+
 			if(samePassword) {
-				return prepare(user)
+				const followers = []
+				for (const id of user.Followers.map(String)) {
+					const follower = extract(await Shadow.GetFromDB('User', {
+							_id: id,
+						}))
+					followers.push(follower)
+				}
+
+				const out = Object.assign({}, user, { Followers: followers })
+				return prepare(out)
 			}
 			return null
 		},
 		LoginWithID: async (_root, {_id}) => {
 			const users = await Shadow.GetFromDB("User", { _id: String(_id) })
 			if(!users || users.length < 1) return null
-			const user = users[0]
-			if(user) {
-				return prepare(user)
+			const user = extract(users)
+
+			if (user) {
+				const followers = []
+				for (const fid of user.Followers) {
+					const follower =
+						extract(await Shadow.GetFromDB("User", { _id: String(fid) }))
+					followers.push(follower)
+				}
+
+				const out = Object.assign(
+					{},
+					user,
+					{ Followers: followers }
+				)
+				return prepare(out)
 			}
 			return null
 		}

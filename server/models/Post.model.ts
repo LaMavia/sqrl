@@ -1,12 +1,13 @@
-import mongoose from "mongoose"
-import Model from "../ShadowMS/classes/Model"
-import iShadow from "../ShadowMS/types/basic"
-import { gql, makeExecutableSchema, addMockFunctionsToSchema } from "apollo-server-express"
-import { GraphQLSchema } from "graphql"
-import sharedTypes from "./sharedTypes"
-import objectifyObjectsId from "../ShadowMS/functions/objectifyObjectsId"
-import prepare from "../ShadowMS/functions/prepare"
-import { isNullOrUndefined } from 'util'
+import { addMockFunctionsToSchema, gql, makeExecutableSchema } from "apollo-server-express";
+import { GraphQLSchema } from "graphql";
+import mongoose from "mongoose";
+import { isNullOrUndefined } from 'util';
+import Model from "../ShadowMS/classes/Model";
+import { extract } from "../ShadowMS/functions/extract";
+import objectifyObjectsId from "../ShadowMS/functions/objectifyObjectsId";
+import prepare from "../ShadowMS/functions/prepare";
+import iShadow from "../ShadowMS/types/basic";
+import sharedTypes from "./sharedTypes";
 
 export const PostDBSchema = new mongoose.Schema({
 	Author: mongoose.Schema.Types.ObjectId,
@@ -24,7 +25,6 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
     type Query {
       Post(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean): Post
       Posts(Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean, Limit: Int): [Post]
-      AllPosts: [Post]
     }
 
     type Mutation {
@@ -34,16 +34,6 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
     }
 
     ${sharedTypes}
-
-    type Post {
-      _id: ID!
-      Author: ID!
-      Date: String!
-      Content: String!
-      Likes: Int!
-      ImageURL: String
-      Edited: Boolean
-    }
   `
 })
 addMockFunctionsToSchema({
@@ -53,18 +43,40 @@ addMockFunctionsToSchema({
 export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   Query: {
     Post: async (_root, args) => {
-      const res = await Shadow.GetFromDB("Post", objectifyObjectsId(args), 1)
-      return prepare(Array.isArray(res) ? res[0] : res) || null
+      const res = extract(
+        await Shadow.GetFromDB("Post", objectifyObjectsId(args), 1)
+      )
+
+      if(res) {
+        const Author = extract(
+          await Shadow.GetFromDB("User", {_id: String(res.Author)}, 1)
+        ) 
+        const out = Object.assign(
+          {}, res._doc,
+          { Author }
+        )
+        return prepare(out) || null
+      }
+      return null
     },
     Posts: async (_root, args) => {
       const { Limit } = args
       delete args.Limit
-      const res = await Shadow.GetFromDB("Post", args, Limit)
-      return res.map(prepare)
-    },
-    AllPosts: async (_root) => {
-      const res = await Shadow.GetFromDB("Post")
-      return res.map(prepare)
+      const res = await Shadow.GetFromDB("Post", args, Limit || Number.MAX_SAFE_INTEGER)
+      if(res) {
+        const out = []
+        for(const post of res) {
+          const Author = prepare(extract(
+            await Shadow.GetFromDB("User", {_id: String(post.Author)}, 1)
+          ))
+          out.push(Object.assign(
+            {}, post._doc || post,
+            { Author }
+          ))
+        }
+        return out.map(prepare)
+      }
+      return null
     }
   },
 

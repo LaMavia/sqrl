@@ -9,4 +9,34 @@ type UpdateResult {
   ok: Int!
   nModified: Int!
 }
+
+type Comment {
+  _id: ID!
+  Author: User!
+  Date: String!
+  Content: String!
+  Post: ID!
+}
+
+type Post {
+  _id: ID!
+  Author: User!
+  Date: String!
+  Content: String!
+  Likes: Int!
+  ImageURL: String
+  Edited: Boolean
+}
+
+type User {
+  _id: ID
+  Name: String!
+  Username: String!
+  Password: String!
+  Email: String!
+  ProfileImageURL: String
+  BackgroundImageURL: String
+  Followers: [User]
+  LikedPosts: [Post]
+}
 `

@@ -51,27 +51,28 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 				<input className="posts__img__switch" type="radio" name="switch" id="switch_img" defaultChecked/>
 				<ul className="posts__img__list">
 				
-				{this.props.posts.list.map((post, i, arr) => {
-					const author: User | undefined = this.props.authors.list.find(
-						a => String(a._id) === String(post.Author)
-					)
-					const d = new Date(post.Date)
-					return (
-						<li className="posts__img__list__item" key={i} onClick={ this.props.openPost.bind(this, String(post._id), arr) }>
-							<UserAndDate user={ author as User } date={ d }/>
-							<div className="posts__img__list__item__body">
-								<img className="posts__img__list__item__body__img" src={ post.ImageURL } alt=""/>
-                <p className="posts__img__list__item__body__content">
-                  { post.Content }
-                </p>
-							</div>
-							<PostBtns post={post} 
-								onLikesClicked={() => { }} 
-								onCommentsClicked={() => { }} 
-							/>
-						</li>
-					)
-				})}
+					{this.props.posts.list.map((post, i, arr) => {
+						const author: User | undefined = this.props.authors.list.find(
+							a => String(a._id) === String(post.Author)
+						)
+						const d = new Date(post.Date)
+						return (
+							<li className="posts__img__list__item" key={i} onClick={this.props.openPost.bind(this, String(post._id), arr)}>
+								<UserAndDate user={author as User} date={d} />
+								<div className="posts__img__list__item__body">
+									<img className="posts__img__list__item__body__img" src={post.ImageURL} alt="" />
+									<p className="posts__img__list__item__body__content">
+										{post.Content}
+									</p>
+								</div>
+								<PostBtns post={post}
+									onLikesClicked={() => { }}
+									onCommentsClicked={() => { }}
+								/>
+							</li>
+						)
+					})}
+				
 			</ul>
 			</section>
 		)
@@ -102,7 +103,7 @@ const mdtp = (dispatch: Dispatch) => ({
 
 	openPost: (_id: string, posts: Post[]) => {
 		loadPost(_id, posts)(dispatch)
-		getComments(`Post: "${String(_id)}"`)
+		getComments(`Post: "${_id}"`)(dispatch)
 		dispatch(postOpen(true))
 	}
 })

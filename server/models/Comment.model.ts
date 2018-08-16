@@ -10,6 +10,7 @@ import { GraphQLSchema } from "graphql"
 import sharedTypes from "./sharedTypes"
 import { isNullOrUndefined } from "util"
 import prepare from "../ShadowMS/functions/prepare"
+import { extract } from "../ShadowMS/functions/extract";
 
 export interface Comment {
 	Author: mongoose.Schema.Types.ObjectId
@@ -38,7 +39,6 @@ export const CommentSchema: GraphQLSchema = makeExecutableSchema({
 				Content: String
 				Post: ID
 			): [Comment]
-			AllComments: [Comment]
 		}
 
 		type Mutation {
@@ -53,14 +53,6 @@ export const CommentSchema: GraphQLSchema = makeExecutableSchema({
 		}
 
 		${sharedTypes}
-
-		type Comment {
-			_id: ID!
-			Author: ID!
-			Date: String!
-			Content: String!
-			Post: ID!
-		}
 	`
 })
 
@@ -105,15 +97,38 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 	},
 	Query: {
 		Comment: async (_root, args): Promise<Comment[]> => {
-			return await Shadow.GetFromDB("Comment", args, 1).then(([x]) => x)
+			if(args._id) args._id = String(args._id)
+			const res = await Shadow.GetFromDB("Comment", args, 1)
+			const comment = extract(res)
+			const author = await Shadow.GetFromDB("User", { _id: String(comment.Author) })
+			const post = await Shadow.GetFromDB("Post", { _id: String(comment.Post) })
+			Object.assign(
+				comment._doc, 
+				{ 
+					Author: extract(author),
+					Post: extract(post)
+				}
+			)
+
+			return prepare(comment) 
 		},
 		Comments: async (_root, args): Promise<Comment[]> => {
 			const res = await Shadow.GetFromDB("Comment", args)
-			return res.map(prepare)
-		},
-		AllComments: async _root => {
-			const res = await Shadow.GetFromDB("Comment")
-			return res.map(prepare)
+			const out = []
+			for(const comment of res) {
+				const author = await Shadow.GetFromDB("User", { _id: String(comment.Author) })
+				const post = await Shadow.GetFromDB("Post", { _id: String(comment.Post) })
+				const toOut = Object.assign(
+					{}, 
+					comment._doc, 
+					{ 
+						Author: extract(author),
+						Post: extract(post)
+					}
+				)
+				out.push(toOut)
+			}
+			return out.map(prepare)
 		}
 	}
 })

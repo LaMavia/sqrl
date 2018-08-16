@@ -79,7 +79,12 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 					Email
 					ProfileImageURL
 					BackgroundImageURL
-					Followers
+					Followers {
+						_id
+						Name
+						Username
+						ProfileImageURL
+					}
 				}
 			}
 		`, {}, apiURL)
@@ -100,15 +105,15 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 			.finally(() => dispatch(userIsLoading(false)))
 	}
 
-export const loginWIthID = (apiURL: string, _id: string) =>
+export const loginWithID = (apiURL: string, _id: string) =>
 [apiURL, _id].some(x => typeof x === "undefined")
 	// @ts-ignore because of "this" binding
-	? loginWIthID.bind(this, ...[apiURL, _id])
+	? loginWithID.bind(this, ...[apiURL, _id])
 	: (dispatch: Dispatch) => {
 		dispatch(userIsLoading(true))
 		// Test user: Name: "test", Username: "TestLogin", Password: "Test123", Email: "Test@mail.com"
 		sendQuery(`
-			{
+			query {
 				LoginWithID(_id: "${_id}") {
 					_id
 					Name
@@ -116,12 +121,21 @@ export const loginWIthID = (apiURL: string, _id: string) =>
 					Email
 					ProfileImageURL
 					BackgroundImageURL
-					Followers
+					Followers {
+						_id
+						Name
+						Username
+						ProfileImageURL
+					}
 				}
 			}
 		`, {}, apiURL)
 			.then(res => res.json())
-			.then(({data}) => {
+			.then((res) => {
+				const {data} = res
+				if(!data || !data.LoginWithID) {
+					throw new Error(`LoginWithID failed: ${JSON.stringify(data)}`)
+				}
 				dispatch(userLoaded(data.LoginWithID))
 				return data.LoginWithID
 			})
@@ -130,7 +144,7 @@ export const loginWIthID = (apiURL: string, _id: string) =>
 				d.setTime(d.getTime() + 7*24*60*60*1000)
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
-			.catch(err => dispatch(userErrored(new Error(err))))
+			.catch(err => dispatch(userErrored(err)))
 			.finally(() => dispatch(userIsLoading(false)))
 	}
 
@@ -159,7 +173,12 @@ export const registerUser = (apiURL: string, Username: string, Password: string,
 					Email
 					ProfileImageURL
 					BackgroundImageURL
-					Followers
+					Followers {
+						_id
+						Name
+						Username
+						ProfileImageURL
+					}
 				}
 			}
 		`, {}, apiURL)

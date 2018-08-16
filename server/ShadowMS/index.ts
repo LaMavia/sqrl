@@ -222,7 +222,7 @@ export default class Shadow {
 					const [cVal, xVal] = [conditions[prop], x[prop]]
 					if(Array.isArray(cVal) && Array.isArray(xVal)) {
 						likeIt = cVal.sort().toString() === xVal.sort().toString()
-					} else if(cVal._bsontype === "ObjectID" && xVal._bsontype === "ObjectID") {
+					} else if(cVal._bsontype === "ObjectID" || xVal._bsontype === "ObjectID") {
 						likeIt = String(cVal) === String(xVal)
 					} else if(typeof cVal === "object" && typeof xVal === "object") {
 						likeIt = Object.is(cVal, xVal)
@@ -235,7 +235,7 @@ export default class Shadow {
 			if(!+limit) return founds
 			else if(limit === 1 && founds.length >= 1) return founds[0] 
 
-			return founds
+			return founds.slice(0, limit)
 
 		}
 		return null
@@ -252,7 +252,7 @@ export default class Shadow {
 			await this.dbModels[modelName].find(conditions).limit(limit)
 				.then(d => out = d)
 				/**
-				 * @description Caching responses from the Database in their corresponding this.data[ModelName]
+				 * @description Caching responses from the Database in their corresponding ```this.data[ModelName]```
 				 */
 				.then(res => {
 					if (Array.isArray(res)) {

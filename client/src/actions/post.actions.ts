@@ -58,15 +58,20 @@ export const postErrored = (error: Error | null) => ({
 export const getPosts = (apiURL: string, conditions: string) => 
   [apiURL, conditions].some(x => typeof x === "undefined") 
     // @ts-ignore because of "this" binding
-    ? getPosts.bind(this, ...[apiURL, conditions, limit, skip]) 
+    ? getPosts.bind(this, ...[apiURL, conditions]) 
     : (dispatch: Dispatch) => {
-
+      debugger
     dispatch(postsAreLoading(true))
     sendQuery(`
       {
         Posts(${conditions}) {
           _id
-          Author
+          Author {
+            _id
+            Name
+            Username
+            ProfileImageURL
+          }
           Date
           Content
           Likes
@@ -96,7 +101,12 @@ export const loadPost = (_id: string, posts: Post[] = []) => (dispatch: Dispatch
     query {
       Post(_id: "${String(_id)}") {
         _id
-        Author
+        Author {
+          _id
+          Name
+          Username
+          ProfileImageURL
+        }
         Date
         Content
         Likes
