@@ -2,9 +2,11 @@ import {
 	IsString,
 	IsUrl,
 	IsMongoId,
-	IsEmail
+	IsEmail,
+	IsInstance
 } from "class-validator"
 import mongoose from 'mongoose'
+import { Post } from "./post.dto";
 
 // export class Name {
 // 	@IsString() readonly First: string
@@ -24,8 +26,8 @@ export class User {
 	@IsEmail() readonly Email: string
 	@IsUrl() readonly ProfileImageURL: string
 	@IsUrl() readonly BackgroundImageURL: string
-	@IsMongoId({each: true}) readonly Followers: mongoose.Schema.Types.ObjectId[]
-	@IsMongoId({each: true}) readonly LikedPosts: mongoose.Schema.Types.ObjectId[]
+	@IsInstance(User, {each: true}) readonly Followers: mongoose.Schema.Types.ObjectId[]
+	@IsInstance(Post, {each: true}) readonly LikedPosts: Post[]
 
 	constructor(
 		_id: mongoose.Schema.Types.ObjectId,
@@ -36,7 +38,7 @@ export class User {
 		ProfileImageURL: string,
 		BackgroundImageURL: string,
 		Followers: mongoose.Schema.Types.ObjectId[],
-		LikedPosts: mongoose.Schema.Types.ObjectId[]
+		LikedPosts: Post[]
 	) {
 		this._id = _id
 		this.Name = Name

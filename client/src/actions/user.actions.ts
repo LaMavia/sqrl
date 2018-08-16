@@ -89,7 +89,8 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 			}
 		`, {}, apiURL)
 			.then(res => res.json())
-			.then(({data}) => {
+			.then((res) => {
+				const { data } = res
 				if(data.Login) { // Found matching user
 					dispatch(userLoaded(data.Login))
 					return data.Login
@@ -134,8 +135,9 @@ export const loginWithID = (apiURL: string, _id: string) =>
 			.then((res) => {
 				const {data} = res
 				if(!data || !data.LoginWithID) {
-					throw new Error(`LoginWithID failed: ${JSON.stringify(data)}`)
+					throw new Error(`LoginWithID failed: ${JSON.stringify(res)}`)
 				}
+				
 				dispatch(userLoaded(data.LoginWithID))
 				return data.LoginWithID
 			})
@@ -194,7 +196,7 @@ export const registerUser = (apiURL: string, Username: string, Password: string,
 				return {}
 			})
 			.then(({_id}) => {
-				debugger
+				
 				if(_id) {
 					const d = new Date()
 					d.setTime(d.getTime() + 7*24*60*60*1000)

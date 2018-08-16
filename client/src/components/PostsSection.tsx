@@ -41,4 +41,4 @@ const mdtp = (dispatch: Dispatch) => ({
   }
 })
 
-export const Posts = connect(mstp, mdtp)(ConnectedPosts)
+export const Posts = connect(mstp, mdtp)(ConnectedPosts)     

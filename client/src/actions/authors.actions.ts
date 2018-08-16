@@ -18,7 +18,6 @@ export const getAuthors = (apiURL: string, conditions: string) =>
 		: (dispatch: Dispatch) => {
 			sendQuery(`
 			{
-	
 				Users(${conditions}) {
 					_id
 					Name
@@ -31,6 +30,13 @@ export const getAuthors = (apiURL: string, conditions: string) =>
 			}
 		`, {}, apiURL)
 				.then(res => res.json())
-				.then(({ data }) => dispatch(authorsLoaded(data.Users)))
+				.then((json) => {
+					const { data } = json
+					if(data.Users) {
+						return dispatch(authorsLoaded(data.Users))
+					}
+					throw new Error(`Failed fetchign authors with the following conditions: ${JSON.stringify(conditions)}`)
+				})
+				.catch(err => console.error(err))
 
 		}

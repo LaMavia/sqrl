@@ -6,17 +6,13 @@ import { Dispatch } from "redux"
 import { connect } from "react-redux"
 import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
-import mongoose from "mongoose"
 import PostBtns from "./PostBtns";
 import { Post } from "../dtos/post.dto";
 import UserAndDate from "./UserAndDate";
 import { getComments } from "../actions/comments.actions";
 
 interface P {
-	authors: {
-		list: User[]
-		ids: mongoose.Types.ObjectId[]
-	}
+	authors: User[]
 	posts: PostsState
 	isOpen: boolean
 	getPosts: (apiURL: string, conditions: string) => any
@@ -30,19 +26,10 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 	}
 
 	componentDidMount() {
-		if (this.props.authors.ids && this.props.authors.list.length === 0) {
-			this.props.getAuthors(`${location.origin}/graphql`, `Ids: ${JSON.stringify(
-        this.props.authors.ids
-          .map(String)
-          .filter(unfetchedID => this.props.authors.list
-            .map(a => String(a._id))
-            .some(fetchedID => fetchedID === unfetchedID))
-			)}`)
-
-			this.props.authors.ids.forEach(id => {
-				this.props.getPosts(`${location.origin}/graphql`, `Author: "${id}"`)
-			})
-		}
+		this.props.authors.forEach(({ _id }) => 
+			_id&&this.props.getPosts(`${location.origin}/graphql`, `Author: "${_id}"`),
+			this
+		)
 	}
 
 	render() {
@@ -52,11 +39,9 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 				<ul className="posts__img__list">
 				
 					{this.props.posts.list.map((post, i, arr) => {
-						const author: User | undefined = this.props.authors.list.find(
-							a => String(a._id) === String(post.Author)
-						)
+						const author: User | undefined = post.Author
 						const d = new Date(post.Date)
-						return (
+						return author&&(
 							<li className="posts__img__list__item" key={i} onClick={this.props.openPost.bind(this, String(post._id), arr)}>
 								<UserAndDate user={author as User} date={d} />
 								<div className="posts__img__list__item__body">
@@ -80,10 +65,8 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 }
 
 const mstp = (state: State) => ({
-	authors: {
-		list: state.authors,
-		ids: (state.user.me as User).Followers
-	},
+	// @ts-ignore
+	authors: state.user.me.Followers,
 	posts: {
 		...state.posts,
 		list: state.posts.list

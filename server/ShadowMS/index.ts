@@ -10,6 +10,8 @@ import Models from "./types/models";
 import nodemailer from "nodemailer"
 import Mail from "nodemailer/lib/mailer"
 import { MailOptions } from "nodemailer/lib/stream-transport";
+import { extract } from "./functions/extract";
+import prepare from "./functions/prepare";
 /**
  * @todo Add CMS routes \w handlers
 */
@@ -388,4 +390,34 @@ export default class Shadow {
 		return out
 	}
 
+
+	// Resolvers herlpers
+	/**
+	 * @description Resolves an input of ```mongoose.Types.ObjectID``` to the prepared model list / model
+	 * @param {T | T[]} input
+	 * @param {String} modelName 
+	 */
+	async Resolve<T extends mongoose.Document>(
+		input: T | T[], 
+		modelName: string
+	) {
+		if (Array.isArray(input)) {
+			let out: T[] = []
+
+			for (const id of input.map(String)) {
+				const toOut = prepare(extract(
+					await this.GetFromDB(modelName, { _id: id })
+				))
+				out.push(toOut)
+			}
+
+			return out
+		} else {
+
+			return prepare(extract(
+				await this.GetFromDB(modelName, { _id: String(input._id) })
+			))
+
+		}
+	}
 }

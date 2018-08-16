@@ -1,10 +1,11 @@
 import { IsString, IsInt, IsMongoId, IsBoolean, IsInstance } from "class-validator"
 import mongoose from "mongoose"
 import { Comment } from "./comment.dto"
+import { User } from "./user.dto"
 
 export class Post {
 	@IsMongoId() readonly _id: mongoose.Types.ObjectId
-	@IsMongoId() readonly Author: mongoose.Types.ObjectId
+	@IsInstance(User) readonly Author: User
 	@IsString()  readonly Date: string
 	@IsString()  readonly Content: string
 	@IsInt()     readonly Likes: number
@@ -14,7 +15,7 @@ export class Post {
 
 	constructor(
 		_id: mongoose.Types.ObjectId,
-		Author: mongoose.Types.ObjectId,
+		Author: User,
 		Date: string,
 		Content: string,
 		Likes: number,

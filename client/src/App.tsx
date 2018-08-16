@@ -24,7 +24,7 @@ class App extends React.PureComponent<Props> {
 	render() {
 		const supportsHistory = 'pushState' in window.history
 		const { UserID: _id } = getCookies()
-		if(_id && !this.props.user) {
+		if(_id && !this.props.user && _id !== "undefined") {
 			this.props.loginWithID(_id)
 		}
 

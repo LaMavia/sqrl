@@ -60,7 +60,7 @@ export const getPosts = (apiURL: string, conditions: string) =>
     // @ts-ignore because of "this" binding
     ? getPosts.bind(this, ...[apiURL, conditions]) 
     : (dispatch: Dispatch) => {
-      debugger
+      
     dispatch(postsAreLoading(true))
     sendQuery(`
       {

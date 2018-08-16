@@ -15,7 +15,7 @@ type Comment {
   Author: User!
   Date: String!
   Content: String!
-  Post: ID!
+  Post: Post!
 }
 
 type Post {

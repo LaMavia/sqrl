@@ -60,11 +60,11 @@ const mstp = (state: State) => ({
     : {},
   comments: state.posts.currentPost 
     // @ts-ignore
-    ? state.comments.list.filter(cm => String(cm.Post) === String(state.posts.currentPost._id) )
+    ? state.comments.list.filter(cm => cm.Post._id === state.posts.currentPost._id)
     : [],
   author: state.posts.currentPost     
     // @ts-ignore
-    ? state.authors.find(sa => String(sa._id) === String(state.posts.currentPost.Author))
+    ? state.posts.currentPost.Author
     : {}
 })
 

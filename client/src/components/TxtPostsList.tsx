@@ -1,23 +1,20 @@
 import React from "react"
 import { getPosts } from "../actions/post.actions"
-import { getAuthors } from "../actions/authors.actions"
+import { getAuthors, authorsLoaded } from "../actions/authors.actions"
 import { State } from "../store"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
 import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
-import mongoose from "mongoose"
 import PostBtns from "./PostBtns";
 import UserAndDate from "./UserAndDate";
 
 interface P {
-	authors: {
-		list: User[]
-		ids: mongoose.Types.ObjectId[]
-	}
+	authors: User[]
 	posts: PostsState
 	getPosts: (apiURL: string, conditions: string) => any
 	getAuthors: (apiURL: string, conditions: string) => any
+	setAuthors: (authors: User[]) => any
 }
 
 class connectedTxtPosts extends React.PureComponent<P, {}> {
@@ -26,15 +23,10 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 	}
 
 	componentDidMount() {
-		if (this.props.authors.ids && this.props.authors.list.length === 0) {
-			this.props.getAuthors(`${location.origin}/graphql`, `Ids: ${JSON.stringify(
-				this.props.authors.ids.map(String)
-			)}`)
-
-			this.props.authors.ids.forEach(id => {
-				this.props.getPosts(`${location.origin}/graphql`, `Author: "${id}"`)
-			})
-		}
+		this.props.authors.forEach(({ _id }) => 
+			_id&&this.props.getPosts(`${location.origin}/graphql`, `Author: "${_id}"`),
+			this
+		)
 	}
 
 	render() {
@@ -43,11 +35,9 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 				<input className="posts__txt__switch" type="radio" name="switch" id="switch_txt"/>
 				<ul className="posts__txt__list">
 				{this.props.posts.list.map((post, i) => {
-					const author: User | undefined = this.props.authors.list.find(
-						a => String(a._id) === String(post.Author)
-					)
+					const author: User | undefined = post.Author
 					const d = new Date(post.Date)
-					return (
+					return author&&(
 						<li className="posts__txt__list__item" key={i}>
 							<UserAndDate user={ author as User } date={ d } />
 							<p className="posts__txt__list__item__body">
@@ -67,10 +57,8 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 }
 
 const mstp = (state: State) => ({
-	authors: {
-		list: state.authors,
-		ids: (state.user.me as User).Followers
-	},
+	// @ts-ignore
+	authors: (state.user.me as User).Followers,
 	posts: {
 		...state.posts,
 		list: state.posts.list
@@ -85,7 +73,9 @@ const mdtp = (dispatch: Dispatch) => ({
 		getPosts(apiURL, conditions)(dispatch),
 
 	getAuthors: (apiURL: string, conditions: string) =>
-		getAuthors(apiURL, conditions)(dispatch)
+		getAuthors(apiURL, conditions)(dispatch),
+	
+	setAuthors: (authors: User[]) => dispatch(authorsLoaded(authors))
 })
 
 // @ts-ignore

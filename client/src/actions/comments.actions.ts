@@ -27,15 +27,24 @@ export const getComments = (conditions: string) => (dispatch: Dispatch) => {
     query {
       Comments(${conditions}) {
         _id
-        Author
+        Author {
+          _id
+          Name
+          Username
+          ProfileImageURL
+        }
         Date
         Content
-        Post
+        Post {
+          _id
+        }
       }
     }
   `)
     .then(r => r.json())
-    .then(({ data }: { data: { Comments: Comment[] | null } }) => {
+    .then((res: { data: { Comments: Comment[] | null } }) => {
+      debugger
+      const { data } = res
       if(data.Comments) {
         return dispatch(commentsLoaded(data.Comments))
       } 

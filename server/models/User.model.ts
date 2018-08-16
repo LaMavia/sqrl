@@ -22,7 +22,8 @@ export const UserDBSchema = new mongoose.Schema({
 	Email: String,
 	ProfileImageURL: String,
 	BackgroundImageURL: String,
-	Followers: [mongoose.Schema.Types.ObjectId]
+	Followers: [mongoose.Schema.Types.ObjectId],
+	LikedPosts: [mongoose.Schema.Types.ObjectId]
 })
 
 export const User = new Model("User", UserDBSchema, "Users")
@@ -130,15 +131,7 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 			const res = await Shadow.GetFromDB("User", args, 1)
 			if(res) {
 				const user = prepare(extract(res))
-				let followers = []
-				for (const id of user.Followers.map(String)) {
-					// @ts-ignore
-					const follower = prepare(extract(await Shadow.GetFromDB('User', {
-						_id: id,
-					})))
-
-					followers.push(follower)
-				}
+				let followers = await Shadow.Resolve(user.Followers, "User")
 
 				const out = Object.assign({}, user, { Followers: followers })
 				return out || null
@@ -174,19 +167,11 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 		Login: async (_root, {Username, Password}) => {
 			const users = await Shadow.GetFromDB("User", { Username })
 			if(!users || users.length < 1) return null
-			const user = extract(users)
+			const user = prepare(extract(users))
 			const samePassword = await bcrypt.compare(Password, user.Password)
 
-
-
 			if(samePassword) {
-				const followers = []
-				for (const id of user.Followers.map(String)) {
-					const follower = extract(await Shadow.GetFromDB('User', {
-							_id: id,
-						}))
-					followers.push(follower)
-				}
+				const followers = await Shadow.Resolve(user.Followers, "User")
 
 				const out = Object.assign({}, user, { Followers: followers })
 				return prepare(out)
@@ -196,16 +181,10 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 		LoginWithID: async (_root, {_id}) => {
 			const users = await Shadow.GetFromDB("User", { _id: String(_id) })
 			if(!users || users.length < 1) return null
-			const user = extract(users)
+			const user = prepare(extract(users))
 
 			if (user) {
-				const followers = []
-				for (const fid of user.Followers) {
-					const follower =
-						extract(await Shadow.GetFromDB("User", { _id: String(fid) }))
-					followers.push(follower)
-				}
-
+				const followers = await Shadow.Resolve(user.Followers, "User")
 				const out = Object.assign(
 					{},
 					user,
