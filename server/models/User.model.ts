@@ -147,7 +147,8 @@ export const UserResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 				res = []
 				for (const _id of args.Ids) {
 					const user = extract(await Shadow.GetFromDB("User", { _id, ...argsCopy }, 1))
-					const followers = []
+					const followers = [];
+					
 					for (const id of user.Followers.map(String)) {
 						const follower = prepare(extract(await Shadow.GetFromDB('User', {
 							_id: id,

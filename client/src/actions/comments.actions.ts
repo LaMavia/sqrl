@@ -43,7 +43,6 @@ export const getComments = (conditions: string) => (dispatch: Dispatch) => {
   `)
     .then(r => r.json())
     .then((res: { data: { Comments: Comment[] | null } }) => {
-      debugger
       const { data } = res
       if(data.Comments) {
         return dispatch(commentsLoaded(data.Comments))

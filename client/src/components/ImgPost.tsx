@@ -5,8 +5,27 @@ import { Post } from '../dtos/post.dto';
 import { Comment } from '../dtos/comment.dto';
 import { User } from '../dtos/user.dto';
 import PostBtns from './PostBtns';
-import { Dispatch } from '../../../node_modules/redux';
 import UserAndDate from './UserAndDate';
+
+interface ItemP {
+  date: String
+  author: User
+  content: String
+}
+
+const CommentsItem = ({ date, author, content }: ItemP) => (
+  <li className="post__aside__comments__item">
+    <UserAndDate 
+      date={ new Date(String(date)) } 
+      user={ author }
+      className="post__aside__comments__item__author"
+    />
+    <p className="post__aside__comments__item__body">
+      { content }
+    </p>
+  </li>
+)
+
 
 interface P {
   post: Post
@@ -27,27 +46,33 @@ class ImgPost extends PureComponent<P> {
       <article className="post">
         <img className="post__img" src={this.props.post.ImageURL} alt=""/>
         <div className="post__aside">
-          <UserAndDate className="post__aside__author" user={this.props.author} date={d} />
-          <main className="post__aside__body">
-            {
-              this.props.post.Content
-            }
-          </main>
-          <div className="post__aside__stats">
-            <PostBtns post={this.props.post}
-              onLikesClicked={() => { }}
-              onCommentsClicked={() => { }}
-            />
-          </div>
+          <header className="post__aside__header">
+            <UserAndDate className="post__aside__header__author" user={this.props.author} date={d} />
+            <main className="post__aside__header__body">
+              {
+                this.props.post.Content
+              }
+            </main>
+            <div className="post__aside__header__stats">
+              <PostBtns post={this.props.post}
+                onLikesClicked={() => { }}
+                onCommentsClicked={() => { }}
+              />
+            </div>
+          </header>
           <ul className="post__aside__comments">
             {
-              this.props.comments.map(c => (
-                <li className="post__aside__comments__item">
-                 { c.Content }
-                </li>
-              ))
+              this.props.comments.map((c, i) => 
+                <CommentsItem 
+                  date={ c.Date } 
+                  author={ c.Author } 
+                  content={ c.Content } 
+                  key={ i }
+                />
+              )
             }
           </ul>
+          <button className="post__aside__add">Add comment</button>
         </div>
       </article>
     )
@@ -66,10 +91,6 @@ const mstp = (state: State) => ({
     // @ts-ignore
     ? state.posts.currentPost.Author
     : {}
-})
-
-const mdtp = (dispatch: Dispatch) => ({
-
 })
 
 // @ts-ignore

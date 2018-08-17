@@ -535,7 +535,7 @@ html, body {
 	width: auto;
 	display: flex;
 	flex-flow: row nowrap;
-	background-color: #ffffff;
+	background-color: #F5F5F5;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -547,23 +547,78 @@ html, body {
 .post__aside {
 		width: 20rem;
 		width: var(--post-aside-w);
+		position: relative;
 	}
 
-.post__aside .btns {
-			background-color: transparent !important;
+.post__aside__header {
+			background-color: #ffffff;
+			box-shadow: 0 0 6px 0px rgba(0, 0, 0, 0.16);
 		}
 
-.post__aside__body {
+.post__aside__header .btns {
+				background-color: transparent !important;
+			}
+
+.post__aside__header__body {
+				width: 100%;
+				padding: 0 15px;
+				overflow: hidden;
+				margin: 15px 0 6px 0;
+			}
+
+.post__aside__comments {
+			padding: 20px;
 			width: 100%;
-			padding: 0 15px;
-			overflow: hidden;
-      margin: 15px 0 6px 0;
+			height: auto;
+			list-style: none;
+		}
+
+.post__aside__comments__item {
+				height: auto;
+				background-color: #ffffff;
+				box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
+			}
+
+.post__aside__comments__item__author {
+					margin-right: 6px;
+					grid-template-columns: 1fr calc(6vh / 1.5) !important;
+					grid-template-columns: 1fr var(--und-img-s) !important;
+					grid-template-areas: 
+						"author img"
+						"date img"
+					!important;
+					text-align: right !important;
+				}
+
+.post__aside__comments__item__body {
+					text-align: right;
+					padding-right: 8px;
+					padding-left: 15px;
+					padding-bottom: 10px;
+					font-size: 0.875rem;
+				}
+
+.post__aside__add {
+			--h: 2.5rem;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: var(--h);
+			height: var(--h);
+			line-height: var(--h);
+			line-height: var(--h);
+			text-align: center;
+			font-size: 0.75rem;
+			color: #707070;
+			background-color: #ffffff;
+			box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
+			border: none;
 		}
 
 :root .btns {
 		--h: 5vh;
-		--item-h: calc(var(--h) / 2);
-		--item-h: calc(var(--h) / 2);
+		--item-h: calc(var(--h) / 2.2);
+		--item-h: calc(var(--h) / 2.2);
 		--item-fs: calc(var(--item-h) / 1.5);
 		--item-fs: calc(var(--item-h) / 1.5);
 		background-color: #eeeeee;
@@ -608,40 +663,42 @@ html, body {
 
 :root {
   --und-h: 6vh;
+	--und-img-s: calc(6vh / 1.5);
+	--und-img-s: calc(var(--und-h) / 1.5);
 }
 
 .und {
 	--und-h: 6vh;
-	--img-s: calc(6vh / 1.5);
-	--img-s: calc(var(--und-h) / 1.5);
-	--txt-h: calc(var(--img-s) / 2);
-	--txt-h: calc(var(--img-s) / 2);
+	--txt-h: calc(calc(6vh / 1.5) / 2);
+	--txt-h: calc(var(--und-img-s) / 2);
 	height: 6vh;
 	height: var(--und-h);
 	display: grid;
-	grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
-	grid-template: repeat(2, var(--txt-h)) / var(--img-s) 1fr;
+	grid-template: repeat(2, var(--txt-h)) / calc(6vh / 1.5) 1fr;
+	grid-template: repeat(2, var(--txt-h)) / var(--und-img-s) 1fr;
 	grid-template-areas:
 		'img author'
 		'img date';
-	padding: calc((6vh - var(--img-s)) / 2) 0;
-	padding: calc((var(--und-h) - var(--img-s)) / 2) 0;
+	padding: calc((6vh - calc(6vh / 1.5)) / 2) 0;
+	padding: calc((var(--und-h) - var(--und-img-s)) / 2) 0;
 	column-gap: 10px;
 	padding-left: 15px;
+
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .und__img {
 		grid-area: img;
-		height: var(--img-s);
-		height: var(--img-s);
-		width: var(--img-s);
+		height: calc(6vh / 1.5);
+		height: var(--und-img-s);
+		width: var(--und-img-s);
 		border-radius: 50%;
 		margin: auto;
 	}
 
 .und__author,
 	.und__date {
-		font-size: 0.9375rem;
+		font-size: 0.875rem;
 		line-height: var(--txt-h);
 		line-height: var(--txt-h);
 	}
