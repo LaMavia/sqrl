@@ -1,5 +1,4 @@
 import { Post } from "../dtos/post.dto"
-import { Comment } from "../dtos/comment.dto"
 import { Dispatch } from "redux"
 import { sendQuery } from "../functions/sendQuery"
 import { getComments } from "./comments.actions";

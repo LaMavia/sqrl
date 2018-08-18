@@ -27,7 +27,6 @@ const connectedNav = ({sections, links, modals, switchSection, closeSection, ope
                 ))
               }
             </ul>
-            <div className="nav__items__item__click-catcher"></div>
           </li>
       ))
     }
@@ -53,8 +52,7 @@ const connectedNav = ({sections, links, modals, switchSection, closeSection, ope
             <ReactSVG className="nav__items__item__btn__icon" path={ btn.icon }/>
           </button>
           <div className="nav__items__item__modal" style={{visibility: btn.open ? "visible" : "hidden"}}>
-            <Modal />
-            <div className="nav__items__item__modal__click-catcher" onClick={closeModal(btn.name)}></div>
+            {(() => btn.open&&<Modal/>)()}
           </div>
         </li>
       )
@@ -74,7 +72,8 @@ const connectedNav = ({sections, links, modals, switchSection, closeSection, ope
 const mapStateToProps = (state: State) => ({
   sections: state.nav.sections,
   links: state.nav.links,
-  modals: state.nav.modals
+  modals: state.nav.modals,
+  user: state.user.me
 })
 const mapDispatchToProps = (_dispatch: Dispatch) => ({
   switchSection: (section: string) => switchNavSection(section).bind({}, _dispatch),

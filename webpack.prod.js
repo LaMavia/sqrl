@@ -7,7 +7,8 @@ module.exports = merge(base, {
   optimization: {
     minimizer: [
       new UglifyJsPlugin({
-        extractComments: true
+        extractComments: true,
+        parallel: true
       })
     ]
   }

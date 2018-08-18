@@ -6,6 +6,7 @@ import {
   NAV_SECTION_SWITCH 
 } from "../actions/nav.action"
 import { Action } from "redux"
+import Add from "../components/Add.modal";
 
 interface NavItem {
 	name: string
@@ -13,7 +14,7 @@ interface NavItem {
 }
 
 export interface NavButton {
-  modal: React.Component | Function
+  modal: any
   open: boolean
   name: string
   icon: string
@@ -59,6 +60,13 @@ export const InitialNavState: NavState = {
       name: "search", 
       icon: "/svg/search.svg", 
       modal: () => null,
+      open: false 
+    },
+    { 
+      name: "add", 
+      icon: "/svg/add.svg",
+      // @ts-ignore 
+      modal: Add,
       open: false 
     }
   ]
