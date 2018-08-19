@@ -7,14 +7,16 @@ import { Dispatch } from 'redux';
 import { closeNavModal } from '../actions/nav.action';
 import ReactSVG from 'react-svg';
 import { PostCacheInput, cacheUpdate, cacheFlush } from '../actions/postCache.actions';
+import { addPost } from "../actions/post.actions"
 import { PostCacheState } from '../reducers/postCache.reducer';
 
 interface P {
   user: User
   post: PostCacheState
   hide: (args: any) => any
-  updateCache: (args: any) => any
-  flushCache: (args: any) => any
+  updateCache: (input: {[key: string]: string}) => any
+  flushCache: (args?: any) => any
+  addPost: (Content: string, ImageURL: string, Author: string) => any
 } 
 
 class ConnectedAdd extends PureComponent<P> {
@@ -22,12 +24,36 @@ class ConnectedAdd extends PureComponent<P> {
   addPost(e: FormEvent) {
     e.preventDefault()
     debugger
+
+    const res = this.props.addPost(
+      this.props.post.Content,
+      this.props.post.ImageURL,
+      String(this.props.user._id)
+    )
+    if(res) {
+      this.props.flushCache()
+    }
   }
 
   updateCache(field: string, e: ChangeEvent) {
-    e.preventDefault()
     // @ts-ignore
-    console.log({[field]: e.target.value})
+    this.props.updateCache({[field]: e.target.value})
+  }
+
+  handleFile(e: Event) {
+    // @ts-ignore
+    if(e.target.files[0]) {
+      const reader = new FileReader()
+      // @ts-ignore
+      reader.readAsDataURL((e.target as EventTarget).files[0])
+      reader.onload = () => {
+        this.props.updateCache({ImageURL: reader.result as string | ""})
+      }
+  
+      reader.onerror = err => {
+        alert(err)
+      }
+    }
   }
 
   render() {
@@ -45,7 +71,7 @@ class ConnectedAdd extends PureComponent<P> {
           </div>
 
           <div className="add__body">
-            <textarea placeholder={`How are you doing ${this.props.user&&this.props.user.Name}?`} className="add__body__txt" onChange={ this.updateCache.bind(this, "Content") }/>
+            <textarea value={ this.props.post.Content } placeholder={`How are you doing ${this.props.user&&this.props.user.Name}?`} className="add__body__txt" onChange={ this.updateCache.bind(this, "Content") }/>
             {
               (() => this.props.post.ImageURL&& 
                 <img className="add__body__img" alt="" src={this.props.post.ImageURL}/>
@@ -54,10 +80,11 @@ class ConnectedAdd extends PureComponent<P> {
           </div>
 
           <div className="add__bottom">
-            <button className="add__bottom__btn">
+            <input accept="image/*" type="file" name="img" id="input-img" style={{display: "none"}} onChange={ this.handleFile.bind(this) }/>
+            <label htmlFor="input-img" className="add__bottom__btn">
               <ReactSVG path="/svg/photo.svg" />
               <p className="add__bottom__btn__txt">Add an image</p>
-            </button>
+            </label>
             <button type="submit" className="add__bottom__btn add__bottom__btn--submit" form="add-form">
               <ReactSVG path="/svg/publish.svg" />
               <p className="add__bottom__btn__txt">Publish</p>
@@ -77,7 +104,8 @@ const mstp = (state: State) => ({
 const mdtp = (dispatch: Dispatch) => ({
   hide: () => closeNavModal("add")(dispatch),
   updateCache: (input: PostCacheInput) => dispatch(cacheUpdate(input)),
-  flushCache: () => dispatch(cacheFlush())
+  flushCache: () => dispatch(cacheFlush()),
+  addPost: (Content: string, ImageURL: string, Author: string) => addPost({Content, ImageURL}, Author)(dispatch)
 })
 
 // @ts-ignore

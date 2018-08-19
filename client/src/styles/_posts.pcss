@@ -1,7 +1,7 @@
 @import './_breakpoints.pcss';
 
 @mixin Item() {
-  margin-top: 1px !important;
+	margin-top: 1px !important;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	display: flex;
 	flex-flow: column nowrap;
@@ -10,21 +10,24 @@
 
 	&__body {
 		padding: 0 15px;
-		font-weight: 200; 
+		font-weight: 200;
 		margin-bottom: 15px;
 		white-space: pre-line;
 	}
 }
 
+:root {
+	--posts-img-p: 33px;
+}
+
 .home {
-	$p: 33px;
 	width: 100%;
-	padding: $p $p 0 calc($p + var(--nav-w));
+	padding: var(--posts-img-p) var(--posts-img-p) 0 calc(var(--posts-img-p) - 5px + var(--nav-w));
 	height: 100vh;
 	overflow: hidden;
 
 	@include phone {
-		padding-left: $p;
+		padding-left: calc(var(--posts-img-p) - 5px);
 	}
 }
 
@@ -34,7 +37,7 @@
 	display: grid;
 	grid-template: 100% / 64% 1fr;
 	grid-template-areas: 'img txt';
-  grid-column-gap: 33px;
+	grid-column-gap: var(--posts-img-p);
 	overflow: hidden;
 
 	&__img,
@@ -42,12 +45,13 @@
 		display: flex;
 		flex-flow: column nowrap;
 		overflow-y: auto;
+		cursor: pointer;
 
 		&__switch {
 			display: none;
-      & ~ * {
-        display: none;
-      }
+			& ~ * {
+				display: none;
+			}
 			&:checked ~ * {
 				display: block;
 			}
@@ -59,16 +63,15 @@
 
 	&__img {
 		grid-area: img;
-    height: auto;
+		height: auto;
 
 		&__list {
 			width: 100%;
-			overflow-x: hidden;
 			overflow-y: auto;
-      column-fill: balance;
-      // column-count: 3;
-      column-width: 20rem;
-      column-gap: 33px;
+			column-count: 3;
+			column-gap: var(--posts-img-p);
+			padding-right: var(--posts-img-p);
+			padding-left: 5px;
 
 			&::-webkit-scrollbar {
 				width: 8px;
@@ -82,25 +85,24 @@
 
 			&__item {
 				@include Item;
-        margin: auto;
-        width: 344px;
-        overflow: hidden;
-        margin-bottom: 33px;
-        display: inline-block;
+				width: 100%;
+				overflow: hidden;
+				display: inline-block;
+				margin-bottom: 33px;
 
-        &__body {
-          padding: 0;
-          height: auto;
-          
-          &__img {
-            width: 100%;
-          }
+				&__body {
+					padding: 0;
+					height: auto;
 
-          &__content {
-            padding: 0 15px;
-            margin-top: 32px;
-          }
-        }
+					&__img {
+						width: 100%;
+					}
+
+					&__content {
+						padding: 0 15px;
+						margin-top: 32px;
+					}
+				}
 			}
 		}
 	}
@@ -116,8 +118,8 @@
 			overflow-y: auto;
 
 			&__item {
-        @include Item;
-      }
+				@include Item;
+			}
 		}
 	}
 }

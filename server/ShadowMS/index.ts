@@ -247,7 +247,7 @@ export default class Shadow {
 	async GetFromDB(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
 		// Check in chache
 		const fromCache = this.GetFromCache(modelName, conditions, limit)
-		if(fromCache) return fromCache
+		if(Array.isArray(fromCache) ? fromCache.length > 0 : fromCache) return fromCache
 
 		else {
 			let out: any[] = []

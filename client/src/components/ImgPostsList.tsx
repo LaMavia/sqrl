@@ -66,7 +66,7 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 
 const mstp = (state: State) => ({
 	// @ts-ignore
-	authors: state.user.me.Followers,
+	authors: [...state.user.me.Followers, state.user.me],
 	posts: {
 		...state.posts,
 		list: state.posts.list

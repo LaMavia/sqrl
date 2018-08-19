@@ -1,7 +1,9 @@
 import { Post } from "../dtos/post.dto"
-import { Dispatch } from "redux"
+import { Dispatch, Action } from "redux"
 import { sendQuery } from "../functions/sendQuery"
 import { getComments } from "./comments.actions";
+import { PostCacheState } from "../reducers/postCache.reducer";
+import { User } from "../dtos/user.dto";
 
 export const POSTS_ARE_LOADING = "POSTS_ARE_LOADING"
 export const POSTS_ERRORED     = "POSTS_ERRORED"
@@ -11,6 +13,8 @@ export const POST_IS_LOADING   = "POST_LOADING"
 export const POST_OPEN         = "POST_OPEN"
 export const POST_LOADED       = "POST_LOADED"
 export const POST_ERRORED      = "POST_ERRORED"
+
+export const POST_ADD          = "POST_ADD"
 
 export const postsAreLoading = (yayOrNay: boolean) => ({
   type: POSTS_ARE_LOADING,
@@ -45,6 +49,26 @@ export const postLoaded = (post: Post) => ({
 export const postErrored = (error: Error | null) => ({
   type: POST_ERRORED,
   error
+})
+
+interface PostAdd extends Action {
+  post: {
+    Author: string
+    Content: string
+    ImageURL?: string
+  }
+}
+/**
+ * @param Post {Object}
+ * @param Author {String} Id of post's author
+ */
+export const postAdd = (Post: PostCacheState, Author: string): PostAdd => ({
+  type: POST_ADD,
+  post: {
+    Author,
+    Content: Post.Content,
+    ImageURL: Post.ImageURL
+  }
 })
 // Functions ---------------------------------------
 
@@ -84,6 +108,41 @@ export const getPosts = (apiURL: string, conditions: string) =>
 				.catch(err => dispatch(postsErrored(new Error(err))))
         .finally(() => dispatch(postsAreLoading(false)))
         
+  }
+
+export const addPost = (Post: PostCacheState, Author: string) =>
+  (dispatch: Dispatch) => {
+    let post: Post | undefined
+
+    sendQuery(`
+      mutation {
+        postAdd(Author: "${Author}", Content: "${Post.Content}", ImageURL: "${Post.ImageURL}") {
+          _id
+          Author {
+            _id
+            Name
+            Username
+            ProfileImageURL
+          }
+          Content
+          Likes
+          Edited
+          ImageURL
+          Date
+        }
+      }
+    `)
+      .then(res => res.json())
+      .then(r => {
+        if(r.data.postAdd) {
+          post = r.data.postAdd
+          return dispatch(postsLoaded([r.data.postAdd]))
+        }
+        throw new Error(`Error(s) adding post: ${r.errors.join("; ")}`)
+      })
+      .catch(err => dispatch(postErrored(err)))
+
+      return post
   }
 
 export const loadPost = (_id: string, posts: Post[] = []) => (dispatch: Dispatch) => {

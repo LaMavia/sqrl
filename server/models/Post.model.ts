@@ -8,6 +8,7 @@ import objectifyObjectsId from "../ShadowMS/functions/objectifyObjectsId";
 import prepare from "../ShadowMS/functions/prepare";
 import iShadow from "../ShadowMS/types/basic";
 import sharedTypes from "./sharedTypes";
+import { User } from "../../client/src/dtos/user.dto";
 
 export const PostDBSchema = new mongoose.Schema({
 	Author: mongoose.Schema.Types.ObjectId,
@@ -81,7 +82,7 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   },
 
   Mutation: {
-    postAdd: async (_root, { Author, Content, ImageURL }) => {debugger
+    postAdd: async (_root, { Author, Content, ImageURL }: { Author: string, Content: string, ImageURL: string }) => {debugger
       const res = await Shadow.AddToDB("Post", {
         Author: mongoose.Types.ObjectId(Author),
         Date: new Date().toDateString(),
@@ -91,7 +92,15 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
         Edited: false
       })
 
-      return prepare(res)
+      if(res) {
+        const author: User | undefined = await Shadow.GetFromDB("User", { _id: Author }, 1)
+
+        const out = Object.assign({}, res._doc, { Author: prepare(extract(author)) })
+
+        return out
+      }
+
+      return null
     },
     postUpdate: async (_root, args) => {debugger
       if(!args._id) throw new Error("_id not specified")
