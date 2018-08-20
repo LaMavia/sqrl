@@ -54,7 +54,7 @@ interface PostAdd extends Action {
   post: {
     Author: string
     Content: string
-    ImageURL?: string
+    ImageID?: string | null
   }
 }
 /**
@@ -66,7 +66,7 @@ export const postAdd = (Post: PostCacheState, Author: string): PostAdd => ({
   post: {
     Author,
     Content: Post.Content,
-    ImageURL: Post.ImageURL
+    ImageID: Post.ImageID
   }
 })
 // Functions ---------------------------------------
@@ -97,7 +97,7 @@ export const getPosts = (apiURL: string, conditions: string) =>
           Date
           Content
           Likes
-          ImageURL
+          Image
           Edited
         }
       }
@@ -109,13 +109,13 @@ export const getPosts = (apiURL: string, conditions: string) =>
         
   }
 
-export const addPost = (Post: PostCacheState, Author: string) =>
+export const addPost = (Post: { Content: string, ImageID: string }, Author: string) =>
   (dispatch: Dispatch) => {
     let post: Post | undefined
 
     sendQuery(`
       mutation {
-        postAdd(Author: "${Author}", Content: "${Post.Content}", ImageURL: "${Post.ImageURL}") {
+        postAdd(Author: "${Author}", Content: ${JSON.stringify(Post.Content)}, ImageID: "${Post.ImageID}") {
           _id
           Author {
             _id
@@ -126,7 +126,7 @@ export const addPost = (Post: PostCacheState, Author: string) =>
           Content
           Likes
           Edited
-          ImageURL
+          Image
           Date
         }
       }
@@ -170,7 +170,7 @@ export const loadPost = (_id: string, posts: Post[] = []) => (dispatch: Dispatch
         Date
         Content
         Likes
-        ImageURL
+        Image
         Edited
       }
     }

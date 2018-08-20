@@ -10,7 +10,7 @@ export class Post {
 	@IsString()  readonly Content: string
 	@IsInt()     readonly Likes: number
 	@IsBoolean() readonly Edited: boolean
-	@IsString()  readonly ImageURL?: string
+	@IsString()  readonly Image?: string
 	@IsInstance(Comment, {each: true}) Comments: Comment[]
 
 	constructor(
@@ -20,7 +20,7 @@ export class Post {
 		Content: string,
 		Likes: number,
 		Edited: boolean,
-		ImageURL?: string,
+		Image?: string,
 		Comments: Comment[] = []
 	) {
 		this._id = _id
@@ -29,7 +29,7 @@ export class Post {
 		this.Content = Content
 		this.Likes = Likes
 		this.Edited = Edited
-		this.ImageURL = ImageURL
+		this.Image = Image
 		this.Comments = Comments
 	}
 }

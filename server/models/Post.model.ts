@@ -9,13 +9,14 @@ import prepare from "../ShadowMS/functions/prepare";
 import iShadow from "../ShadowMS/types/basic";
 import sharedTypes from "./sharedTypes";
 import { User } from "../../client/src/dtos/user.dto";
+import { Image } from "../../client/src/dtos/image.dto";
 
 export const PostDBSchema = new mongoose.Schema({
 	Author: mongoose.Schema.Types.ObjectId,
   Date: mongoose.Schema.Types.Date,
   Content: String,
   Likes: Number,
-  ImageID: String,
+  Image: mongoose.Schema.Types.ObjectId,
   Edited: Boolean
 })
 
@@ -24,14 +25,14 @@ export const Post = new Model("Post", PostDBSchema, "Posts")
 export const PostSchema: GraphQLSchema = makeExecutableSchema({
   typeDefs: gql`
     type Query {
-      Post(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean): Post
-      Posts(Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Edited: Boolean, Limit: Int): [Post]
+      Post(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, Image: ID, Edited: Boolean): Post
+      Posts(Author: ID, Date: String, Content: String, Likes: Int, Image: ID, Edited: Boolean, Limit: Int): [Post]
     }
 
     type Mutation {
-      postAdd(Author: ID!, Content: String, Image: Upload): Post
-      postUpdate(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Many: Boolean = false): UpdateResult
-      postDelete(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Many: Boolean = false): DeleteResult
+      postAdd(Author: ID!, Content: String!, ImageID: String): Post
+      postUpdate(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, Image: ID, Many: Boolean = false): UpdateResult
+      postDelete(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, Image: ID, Many: Boolean = false): DeleteResult
     }
 
     ${sharedTypes}
@@ -40,13 +41,6 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
 addMockFunctionsToSchema({
   schema: PostSchema
 })
-
-interface File {
-  filename: string
-  mimetype: string
-  encoding: string
-  createReadStream: () => ReadableStream
-}
 
 export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   Query: {
@@ -59,9 +53,12 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
         const Author = extract(
           await Shadow.GetFromDB("User", {_id: String(res.Author)}, 1)
         ) 
+        const Image = extract(
+          await Shadow.GetFromDB("Image", { _id: String(res.Image) }, 1)
+        )
         const out = Object.assign(
           {}, res._doc,
-          { Author }
+          { Author, Image }
         )
         return prepare(out) || null
       }
@@ -77,9 +74,12 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
           const Author = prepare(extract(
             await Shadow.GetFromDB("User", {_id: String(post.Author)}, 1)
           ))
+          const Image = prepare(extract(
+            await Shadow.GetFromDB("Image", { _id: String(res.Image) }, 1)
+          ))
           out.push(Object.assign(
             {}, post._doc || post,
-            { Author }
+            { Author, Image }
           ))
         }
         return out.map(prepare)
@@ -89,29 +89,31 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   },
 
   Mutation: {
-    postAdd: async (_root, { Author, Content, Image }: { Author: string, Content: string, Image: File }) => {debugger
+    postAdd: async (_root, { Author, Content, ImageID }: { Author: string, Content: string, ImageID: string }) => {debugger
       /**
        * Ideas on how to fix the Base64 bug:
        * Use apollo FileUpload mutation
        * Use separate api for sending images and store them in the separate collection
        * Idk...
        */
-      const f = await Image
-
 
       const res = await Shadow.AddToDB("Post", {
         Author: mongoose.Types.ObjectId(Author),
         Date: new Date().toDateString(),
         Content,
         Likes: 0,
-        ImageURL: Image || "",
+        Image: mongoose.Types.ObjectId(ImageID) || null,
         Edited: false
       })
 
       if(res) {
         const author: User | undefined = await Shadow.GetFromDB("User", { _id: Author }, 1)
+        const image: Image | undefined = await Shadow.GetFromDB("Image", { _id: ImageID }, 1)
 
-        const out = Object.assign({}, res._doc, { Author: prepare(extract(author)) })
+        const out = Object.assign({}, res._doc, { 
+          Author: prepare(extract(author)),
+          Image: prepare(extract(image))
+        })
 
         return out
       }

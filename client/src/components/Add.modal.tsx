@@ -16,7 +16,7 @@ interface P {
   hide: (args: any) => any
   updateCache: (input: {[key: string]: string}) => any
   flushCache: (args?: any) => any
-  addPost: (Content: string, ImageURL: string, Author: string) => any
+  addPost: (Content: string, ImageURL: string | null, Author: string) => any
 } 
 
 class ConnectedAdd extends PureComponent<P> {
@@ -27,7 +27,7 @@ class ConnectedAdd extends PureComponent<P> {
 
     const res = this.props.addPost(
       this.props.post.Content,
-      this.props.post.ImageURL,
+      this.props.post.ImageID,
       String(this.props.user._id)
     )
     if(res) {
@@ -40,12 +40,39 @@ class ConnectedAdd extends PureComponent<P> {
     this.props.updateCache({[field]: e.target.value})
   }
 
-  handleFile(e: Event) {
+  async handleFile(e: Event) {
     // @ts-ignore
     if(e.target.files[0]) {
       // @ts-ignore
       const file = (e.target as HTMLInputElement).files[0]
-      this.props.updateCache({ Image: file })
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (() => {
+        const Img = reader.result
+        const Ext = (file.type.match(/image\/(.*)/) || [""])[0]
+        debugger
+        fetch(`${location.origin}/img`, {
+          method: "POST",
+          body: JSON.stringify({
+            Img, Ext
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then(res => res.json())
+          .then(r => {
+            if(r.error && !Img) {
+              throw new Error(`Error sending Image: ${JSON.stringify(r.error)}`)
+            }
+            this.props.updateCache({ Image: r.Img.Img, ImageID: r.Img._id })
+          })
+          .catch(err => {
+            alert(err) // PLACEHOLDER
+          })
+      })
+
+      reader.onerror = () => {}
     }
   }
 
@@ -66,8 +93,8 @@ class ConnectedAdd extends PureComponent<P> {
           <div className="add__body">
             <textarea value={ this.props.post.Content } placeholder={`How are you doing ${this.props.user&&this.props.user.Name}?`} className="add__body__txt" onChange={ this.updateCache.bind(this, "Content") }/>
             {
-              (() => this.props.post.ImageURL&& 
-                <img className="add__body__img" alt="" src={this.props.post.ImageURL}/>
+              (() => this.props.post.Image&& 
+                <img className="add__body__img" alt="" src={this.props.post.Image}/>
               )()
             }
           </div>
@@ -98,7 +125,7 @@ const mdtp = (dispatch: Dispatch) => ({
   hide: () => closeNavModal("add")(dispatch),
   updateCache: (input: PostCacheInput) => dispatch(cacheUpdate(input)),
   flushCache: () => dispatch(cacheFlush()),
-  addPost: (Content: string, ImageURL: string, Author: string) => addPost({Content, ImageURL}, Author)(dispatch)
+  addPost: (Content: string, ImageID: string, Author: string) => addPost({Content, ImageID}, Author)(dispatch)
 })
 
 // @ts-ignore

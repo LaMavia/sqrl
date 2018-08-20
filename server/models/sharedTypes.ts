@@ -24,7 +24,7 @@ type Post {
   Date: String!
   Content: String!
   Likes: Int!
-  ImageURL: String
+  Image: String
   Edited: Boolean
 }
 

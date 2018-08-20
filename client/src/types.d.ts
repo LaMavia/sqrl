@@ -13,7 +13,7 @@ export interface Post {
 	Author: string
   Date: string
   Content: string,
-  ImageURL?: string,
+  Image?: string,
   Likes: number,
   Comments: Comment[]
 }

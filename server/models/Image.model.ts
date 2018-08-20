@@ -5,4 +5,4 @@ const ImageSchema = new mongoose.Schema({
   Img: String
 })
 
-export default new ShadowModel("Image",)
+export const Image = new ShadowModel("Image", ImageSchema, "Images")

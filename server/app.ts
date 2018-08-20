@@ -2,6 +2,7 @@ import ShadowMS from "./ShadowMS"
 import { Comment, CommentSchema, CommentResolver } from "./models/Comment.model"
 import { User, UserSchema, UserResolver } from "./models/User.model"
 import { Post, PostSchema, PostResolver } from "./models/Post.model"
+import { Image } from "./models/Image.model"
 import express from "express"
 import compression from "compression"
 import zlib from "zlib"
@@ -15,12 +16,14 @@ import { IndexRoute } from "./routes"
 import { ActiveRoute } from "./routes/active"
 import { LogoutRoute } from "./routes/logout"
 
+import { ImgPostRoute } from "./api/img.post"
+
 setupDb()
 export const app = new ShadowMS(
 	mongoose.connection,
-	[Comment, User, Post],
+	[Comment, User, Post, Image],
 	[
-		bodyParser.json({ limit: "4mb" }),
+		bodyParser.json({ limit: "50mb" }),
 		bodyParser.urlencoded({ extended: false }),
 		cookieParser(),
 		express.static(path.join(__dirname, "../client/assets/")),
@@ -40,7 +43,7 @@ export const app = new ShadowMS(
 	 * Keep IndexRoute as the last route, because it's a catch-all to help with react-router.
 	 */
 	[ActiveRoute, LogoutRoute, IndexRoute],
-	[],
+	[ ImgPostRoute ],
 	(err: any) => console.dir(new Error(err), { colors: true }),
 	[CommentSchema, UserSchema, PostSchema], 
 	[CommentResolver, UserResolver, PostResolver]

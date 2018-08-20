@@ -7,12 +7,14 @@ import {
 
 export interface PostCacheState {
   Content: string
-  ImageURL: string
+  Image: string | null
+  ImageID: string | null
 }
 
 export const InitialPostCacheState: PostCacheState = {
   Content: "",
-  ImageURL: 'https://images.pexels.com/photos/559768/pexels-photo-559768.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
+  Image: null,
+  ImageID: null
 } 
 
 interface PostCacheAction extends Action {
