@@ -12,7 +12,7 @@ export interface PostCacheState {
 
 export const InitialPostCacheState: PostCacheState = {
   Content: "",
-  ImageURL: "https://images.pexels.com/photos/1164675/pexels-photo-1164675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  ImageURL: 'https://images.pexels.com/photos/559768/pexels-photo-559768.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
 } 
 
 interface PostCacheAction extends Action {

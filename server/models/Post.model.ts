@@ -15,7 +15,7 @@ export const PostDBSchema = new mongoose.Schema({
   Date: mongoose.Schema.Types.Date,
   Content: String,
   Likes: Number,
-  ImageURL: String,
+  ImageID: String,
   Edited: Boolean
 })
 
@@ -29,7 +29,7 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
     }
 
     type Mutation {
-      postAdd(Author: ID!, Content: String, ImageURL: String): Post
+      postAdd(Author: ID!, Content: String, Image: Upload): Post
       postUpdate(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Many: Boolean = false): UpdateResult
       postDelete(_id: ID, Author: ID, Date: String, Content: String, Likes: Int, ImageURL: String, Many: Boolean = false): DeleteResult
     }
@@ -40,6 +40,13 @@ export const PostSchema: GraphQLSchema = makeExecutableSchema({
 addMockFunctionsToSchema({
   schema: PostSchema
 })
+
+interface File {
+  filename: string
+  mimetype: string
+  encoding: string
+  createReadStream: () => ReadableStream
+}
 
 export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   Query: {
@@ -82,13 +89,22 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
   },
 
   Mutation: {
-    postAdd: async (_root, { Author, Content, ImageURL }: { Author: string, Content: string, ImageURL: string }) => {debugger
+    postAdd: async (_root, { Author, Content, Image }: { Author: string, Content: string, Image: File }) => {debugger
+      /**
+       * Ideas on how to fix the Base64 bug:
+       * Use apollo FileUpload mutation
+       * Use separate api for sending images and store them in the separate collection
+       * Idk...
+       */
+      const f = await Image
+
+
       const res = await Shadow.AddToDB("Post", {
         Author: mongoose.Types.ObjectId(Author),
         Date: new Date().toDateString(),
         Content,
         Likes: 0,
-        ImageURL,
+        ImageURL: Image || "",
         Edited: false
       })
 

@@ -4,7 +4,7 @@ export const CACHE_FLUSH = "POST_CACHE_FLUSH"
 
 export interface PostCacheInput {
   Content?: string
-  ImageURL?: string
+  Image?: File
 }
 export const cacheUpdate = (input: PostCacheInput) => ({
   type: CACHE_UPDATE,

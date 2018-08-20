@@ -3,7 +3,6 @@ import { Dispatch, Action } from "redux"
 import { sendQuery } from "../functions/sendQuery"
 import { getComments } from "./comments.actions";
 import { PostCacheState } from "../reducers/postCache.reducer";
-import { User } from "../dtos/user.dto";
 
 export const POSTS_ARE_LOADING = "POSTS_ARE_LOADING"
 export const POSTS_ERRORED     = "POSTS_ERRORED"
@@ -131,8 +130,11 @@ export const addPost = (Post: PostCacheState, Author: string) =>
           Date
         }
       }
-    `)
-      .then(res => res.json())
+    `, {}, `${location.origin}/graphql`)
+      .then(res => {
+        debugger
+        return res.json()
+      })
       .then(r => {
         if(r.data.postAdd) {
           post = r.data.postAdd

@@ -20,10 +20,11 @@ export const app = new ShadowMS(
 	mongoose.connection,
 	[Comment, User, Post],
 	[
-		bodyParser.json({ limit: "3mb" }),
+		bodyParser.json({ limit: "4mb" }),
 		bodyParser.urlencoded({ extended: false }),
 		cookieParser(),
 		express.static(path.join(__dirname, "../client/assets/")),
+		express.static(path.join(__dirname, "./public/")),
 		compression({
 			level: zlib.Z_BEST_SPEED,
 			filter: (req, res): boolean => {

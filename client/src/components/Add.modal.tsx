@@ -43,16 +43,9 @@ class ConnectedAdd extends PureComponent<P> {
   handleFile(e: Event) {
     // @ts-ignore
     if(e.target.files[0]) {
-      const reader = new FileReader()
       // @ts-ignore
-      reader.readAsDataURL((e.target as EventTarget).files[0])
-      reader.onload = () => {
-        this.props.updateCache({ImageURL: reader.result as string | ""})
-      }
-  
-      reader.onerror = err => {
-        alert(err)
-      }
+      const file = (e.target as HTMLInputElement).files[0]
+      this.props.updateCache({ Image: file })
     }
   }
 
