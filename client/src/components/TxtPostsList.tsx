@@ -62,7 +62,7 @@ const mstp = (state: State) => ({
 	posts: {
 		...state.posts,
 		list: state.posts.list
-			.filter(post => !post.ImageURL)
+			.filter(post => !post.Image)
 			// @ts-ignore
 			.sort((a, b) => new Date(a.Date) - new Date(b.Date))
 	}

@@ -76,7 +76,7 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
           ))
           const Image = prepare(extract(
             await Shadow.GetFromDB("Image", { _id: String(res.Image) }, 1)
-          ))
+          )).Img
           out.push(Object.assign(
             {}, post._doc || post,
             { Author, Image }
@@ -112,7 +112,7 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
         const out = Object.assign({}, res._doc, { 
           Author: prepare(extract(author)),
-          Image: prepare(extract(image))
+          Image: prepare(extract(image)).Img
         })
 
         return out

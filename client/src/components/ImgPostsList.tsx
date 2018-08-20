@@ -45,7 +45,7 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 							<li className="posts__img__list__item" key={i} onClick={this.props.openPost.bind(this, String(post._id), arr)}>
 								<UserAndDate user={author as User} date={d} />
 								<div className="posts__img__list__item__body">
-									<img className="posts__img__list__item__body__img" src={post.ImageURL} alt="" />
+									<img className="posts__img__list__item__body__img" src={post.Image} alt="" />
 									<p className="posts__img__list__item__body__content">
 										{post.Content}
 									</p>
@@ -70,7 +70,7 @@ const mstp = (state: State) => ({
 	posts: {
 		...state.posts,
 		list: state.posts.list
-			.filter(post => !!post.ImageURL)
+			.filter(post => !!post.Image)
 			// @ts-ignore
 			.sort((a, b) => new Date(a.Date) - new Date(b.Date))
 	},
