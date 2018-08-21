@@ -8,13 +8,13 @@ import {
 export interface PostCacheState {
   Content: string
   Image: string | null
-  ImageID: string | null
+  ImageID: string
 }
 
 export const InitialPostCacheState: PostCacheState = {
   Content: "",
   Image: null,
-  ImageID: null
+  ImageID: ""
 } 
 
 interface PostCacheAction extends Action {

@@ -44,7 +44,7 @@ class ImgPost extends PureComponent<P> {
     const d = new Date(this.props.post.Date)
     return (
       <article className="post">
-        <img className="post__img" src={this.props.post.ImageURL} alt=""/>
+        <img className="post__img" src={this.props.post.Image} alt=""/>
         <div className="post__aside">
           <header className="post__aside__header">
             <UserAndDate className="post__aside__header__author" user={this.props.author} date={d} />
