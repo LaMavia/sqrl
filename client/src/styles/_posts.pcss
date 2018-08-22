@@ -6,7 +6,9 @@
 	display: flex;
 	flex-flow: column nowrap;
 	background-color: #ffffff;
-	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
+	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
+	width: 98%;
+	margin: 0 auto 33px auto;
 
 	&__body {
 		padding: 0 15px;
@@ -48,16 +50,20 @@
 		cursor: pointer;
 
 		&__switch {
-			display: none;
-			& ~ * {
+			display: block;
+			@include desktop {
 				display: none;
 			}
+			& ~ * {
+				display: none !important;
+				@include desktop {
+					display: block !important;
+				}
+			}
 			&:checked ~ * {
-				display: block;
+				display: block !important;
 			}
-			@include phone {
-				display: block;
-			}
+			
 		}
 	}
 
@@ -72,6 +78,9 @@
 			column-gap: var(--posts-img-p);
 			padding-right: var(--posts-img-p);
 			padding-left: 5px;
+			@include tablet-ver {
+				column-count: 2;
+			}
 
 			&::-webkit-scrollbar {
 				width: 8px;
@@ -88,7 +97,6 @@
 				width: 100%;
 				overflow: hidden;
 				display: inline-block;
-				margin-bottom: 33px;
 
 				&__body {
 					padding: 0;

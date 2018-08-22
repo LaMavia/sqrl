@@ -25,14 +25,13 @@ class ConnectedAdd extends PureComponent<P> {
     e.preventDefault()
     debugger
 
-    const res = this.props.addPost(
+    this.props.addPost(
       this.props.post.Content,
       this.props.post.ImageID,
       String(this.props.user._id)
     )
-    if(res) {
-      this.props.flushCache()
-    }
+
+    this.props.flushCache()
   }
 
   updateCache(field: string, e: ChangeEvent) {
@@ -40,11 +39,12 @@ class ConnectedAdd extends PureComponent<P> {
     this.props.updateCache({[field]: e.target.value})
   }
 
-  async handleFile(e: Event) {
+  async handleFile(e: ChangeEvent) {
     // @ts-ignore
-    if(e.target.files[0]) {
+    const file = (e.target as HTMLInputElement).files[0]
+    // @ts-ignore
+    if(file) {
       // @ts-ignore
-      const file = (e.target as HTMLInputElement).files[0]
       const reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onload = (() => {

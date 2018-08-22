@@ -4,6 +4,7 @@
 	--post-h: 60vh;
 	--post-aside-w: 20rem;
 	--post-body-h: auto;
+	--post-body-w: 30rem;
 }
 
 @include phone {
@@ -12,26 +13,76 @@
 	}
 }
 
+@mixin body {
+	width: 100%;
+	padding: 0 15px;
+	overflow: hidden;
+	margin: 15px 0 6px 0;
+	white-space: pre-line;
+}
+
 .post {
 	position: fixed;
 	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	right: 50%;
+	transform: translate(50%, -50%);
 	height: var(--post-h);
 	width: auto;
 	display: flex;
 	flex-flow: row nowrap;
-	background-color: #F5F5F5;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	overflow: hidden;
+	background-color: #f5f5f5;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+	&--txt {
+		--post-aside-w: 20rem;
+		background-color: #ffffff;
+
+		.post__aside {
+			height: var(--post-h);
+		}
+
+		.post__left {
+			background-color: inherit;
+		}
+
+		.post__header {
+			width: var(--post-body-w);
+			align-content: space-between;
+			background-color: #ffffff;
+
+			&__stats {
+				margin: auto 0 auto auto;
+				background-color: inherit;
+
+				.btns {
+					background-color: inherit;
+				}
+			}
+		}
+	}
 
 	&__img {
 		height: 100%;
 		width: auto;
 	}
 
+	&__body {
+		@include body;
+		width: var(--post-body-w);
+	}
+
+	&__header {
+		height: var(--und-h);
+		width: 100%;
+		display: flex;
+		flex-flow: row nowrap;
+	}
+
 	&__aside {
 		width: var(--post-aside-w);
 		position: relative;
+		background-color: #f5f5f5;
 
 		&__header {
 			background-color: #ffffff;
@@ -40,13 +91,9 @@
 			.btns {
 				background-color: transparent !important;
 			}
-	
+
 			&__body {
-				width: 100%;
-				padding: 0 15px;
-				overflow: hidden;
-				margin: 15px 0 6px 0;
-				white-space: pre-line;
+				@include body;
 			}
 		}
 
@@ -64,10 +111,9 @@
 				&__author {
 					margin-right: 6px;
 					grid-template-columns: 1fr var(--und-img-s) !important;
-					grid-template-areas: 
-						"author img"
-						"date img"
-					!important;
+					grid-template-areas:
+						'author img'
+						'date img' !important;
 					text-align: right !important;
 				}
 

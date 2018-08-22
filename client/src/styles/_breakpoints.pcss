@@ -34,12 +34,6 @@
   }
 }
 
-@mixin oldAF {
-  @supports not (display: flex) {
-    @content;
-  }
-}
-
 @mixin android-native {
   @supports not (grid-template: 1fr / 1fr) {
     @content;

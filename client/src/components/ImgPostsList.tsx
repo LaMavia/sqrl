@@ -1,24 +1,10 @@
 import React from "react"
-import { getPosts, loadPost, postOpen } from "../actions/post.actions"
-import { getAuthors } from "../actions/authors.actions"
-import { State } from "../store"
-import { Dispatch } from "redux"
 import { connect } from "react-redux"
-import { PostsState } from "../reducers/post.reducer"
 import { User } from "../dtos/user.dto"
 import PostBtns from "./PostBtns";
-import { Post } from "../dtos/post.dto";
 import UserAndDate from "./UserAndDate";
-import { getComments } from "../actions/comments.actions";
-
-interface P {
-	authors: User[]
-	posts: PostsState
-	isOpen: boolean
-	getPosts: (apiURL: string, conditions: string) => any
-	getAuthors: (apiURL: string, conditions: string) => any
-	openPost: (_id: string) => any
-}
+import { mdtp, makeMSTP } from "../mappers/postList.mapper";
+import { P } from "../interfaces/postsList";
 
 class connectedImgPosts extends React.PureComponent<P, {}> {
 	constructor(props: P) {
@@ -64,32 +50,6 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 	}
 }
 
-const mstp = (state: State) => ({
-	// @ts-ignore
-	authors: [...state.user.me.Followers, state.user.me],
-	posts: {
-		...state.posts,
-		list: state.posts.list
-			.filter(post => !!post.Image)
-			// @ts-ignore
-			.sort((a, b) => new Date(a.Date) - new Date(b.Date))
-	},
-	isOpen: state.posts.open
-})
-
-const mdtp = (dispatch: Dispatch) => ({
-	getPosts: (apiURL: string, conditions: string) =>
-		getPosts(apiURL, conditions)(dispatch),
-
-	getAuthors: (apiURL: string, conditions: string) =>
-		getAuthors(apiURL, conditions)(dispatch),
-
-	openPost: (_id: string, posts: Post[]) => {
-		loadPost(_id, posts)(dispatch)
-		getComments(`Post: "${_id}"`)(dispatch)
-		dispatch(postOpen(true))
-	}
-})
-
+const mstp = makeMSTP(true)
 // @ts-ignore
 export default connect(mstp, mdtp)(connectedImgPosts)

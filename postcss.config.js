@@ -14,6 +14,7 @@ module.exports = ctx => {
 			require("postcss-utilities")(),
 			require("postcss-mixins")(),
 			require("postcss-pxtorem")(),
+			require("postcss-extend")(),
 			isProd && require("css-mqpacker"),
 			isProd && require("cssnano")()
 		]

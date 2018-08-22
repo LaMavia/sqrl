@@ -1,13 +1,13 @@
 import React from "react"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
-import { switchNavSection, closeNavSection, openNavModal, closeNavModal } from "../actions/nav.action"
+import { switchNavSection, closeNavSection, openNavModal } from "../actions/nav.action"
 import { Section, NavLink as INavLink, NavButton } from "../reducers/nav.reducer"
 import ReactSVG from "react-svg"
 import { NavLink } from "react-router-dom"
 import { State } from "../store";
 
-const connectedNav = ({sections, links, modals, switchSection, closeSection, openModal, closeModal}: any) => {
+const connectedNav = ({sections, links, modals, switchSection, closeSection, openModal}: any) => {
   let i = 0
   const renderSections = (sections: {[name: string]: Section}) => {
     const renderedList = []
@@ -79,7 +79,7 @@ const mapDispatchToProps = (_dispatch: Dispatch) => ({
   switchSection: (section: string) => switchNavSection(section).bind({}, _dispatch),
   closeSection: (section: string) => closeNavSection(section).bind({}, _dispatch),
   openModal: (modal: string) => openNavModal(modal).bind({}, _dispatch),
-  closeModal: (modal: string) => closeNavModal(modal).bind({}, _dispatch)
+  // closeModal: (modal: string) => closeNavModal(modal).bind({}, _dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(connectedNav)

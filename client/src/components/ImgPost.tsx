@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
-import { State } from '../store';
 import { Post } from '../dtos/post.dto';
 import { Comment } from '../dtos/comment.dto';
 import { User } from '../dtos/user.dto';
 import PostBtns from './PostBtns';
 import UserAndDate from './UserAndDate';
+import { mstp } from '../mappers/post.mapper';
 
 interface ItemP {
-  date: String
+  date: string
   author: User
-  content: String
+  content: string
 }
 
 const CommentsItem = ({ date, author, content }: ItemP) => (
@@ -78,20 +78,6 @@ class ImgPost extends PureComponent<P> {
     )
   }
 }
-
-const mstp = (state: State) => ({
-  post: state.posts.currentPost 
-    ? state.posts.currentPost 
-    : {},
-  comments: state.posts.currentPost 
-    // @ts-ignore
-    ? state.comments.list.filter(cm => cm.Post._id === state.posts.currentPost._id)
-    : [],
-  author: state.posts.currentPost     
-    // @ts-ignore
-    ? state.posts.currentPost.Author
-    : {}
-})
 
 // @ts-ignore
 export default connect(mstp)(ImgPost)
