@@ -13,6 +13,7 @@ import { navReducer, InitialNavState, NavState } from "./reducers/nav.reducer"
 import { authorsReducer, InitialAuthorsState, AuthorsState } from "./reducers/authors.reducer"
 import { commentsReducer, InitialCommentsState, CommentsState } from "./reducers/comments.reducer"
 import { postCacheReducer, InitialPostCacheState, PostCacheState } from "./reducers/postCache.reducer"
+import { modalReducer, InitialModalState, Modal as ModalState } from "./reducers/modal.reducer"
 
 export interface State {
 	posts: PostsState
@@ -20,7 +21,8 @@ export interface State {
 	nav: NavState,
 	authors: AuthorsState,
 	comments: CommentsState,
-	postCache: PostCacheState
+	postCache: PostCacheState,
+	modal: ModalState[]
 }
 
 export type MyStore = Store<State, Action<any>>
@@ -36,7 +38,8 @@ export const store: MyStore = createStore(
 		nav: navReducer,
 		authors: authorsReducer,
 		comments: commentsReducer,
-		postCache: postCacheReducer
+		postCache: postCacheReducer,
+		modal: modalReducer
 	}),
 	{
 		posts: InitialPostsState,
@@ -44,7 +47,8 @@ export const store: MyStore = createStore(
 		nav: InitialNavState,
 		authors: InitialAuthorsState,
 		comments: InitialCommentsState,
-		postCache: InitialPostCacheState
+		postCache: InitialPostCacheState,
+		modal: InitialModalState
 	},
 	compose(
     ...middleware

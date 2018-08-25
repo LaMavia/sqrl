@@ -1,11 +1,12 @@
 import React from "react"
 import { Dispatch } from "redux"
 import { connect } from "react-redux"
-import { switchNavSection, closeNavSection, openNavModal } from "../actions/nav.action"
+import { switchNavSection, closeNavSection } from "../actions/nav.action"
 import { Section, NavLink as INavLink, NavButton } from "../reducers/nav.reducer"
 import ReactSVG from "react-svg"
 import { NavLink } from "react-router-dom"
 import { State } from "../store";
+import { openModal } from "../actions/modal.actions";
 
 const connectedNav = ({sections, links, modals, switchSection, closeSection, openModal}: any) => {
   let i = 0
@@ -45,15 +46,11 @@ const connectedNav = ({sections, links, modals, switchSection, closeSection, ope
 
   const renderModals = (btns: NavButton[]) => 
     btns && btns.map(btn => {
-      const Modal: any = btn.modal
       return (
         <li className="nav__items__item" key={ i++ }>
-          <button className="nav__items__item__btn" onClick={ openModal(btn.name) }>
+          <button className="nav__items__item__btn" onClick={ openModal(btn.modal) }>
             <ReactSVG className="nav__items__item__btn__icon" path={ btn.icon }/>
           </button>
-          <div className="nav__items__item__modal" style={{visibility: btn.open ? "visible" : "hidden"}}>
-            {(() => btn.open&&<Modal/>)()}
-          </div>
         </li>
       )
     })
@@ -78,7 +75,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (_dispatch: Dispatch) => ({
   switchSection: (section: string) => switchNavSection(section).bind({}, _dispatch),
   closeSection: (section: string) => closeNavSection(section).bind({}, _dispatch),
-  openModal: (modal: string) => openNavModal(modal).bind({}, _dispatch),
+  openModal: (modal: string) => openModal(modal).bind({}, _dispatch),
   // closeModal: (modal: string) => closeNavModal(modal).bind({}, _dispatch)
 })
 

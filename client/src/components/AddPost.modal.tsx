@@ -4,11 +4,11 @@ import Modal from './Modal';
 import { connect } from 'react-redux';
 import { State } from '../store';
 import { Dispatch } from 'redux';
-import { closeNavModal } from '../actions/nav.action';
 import ReactSVG from 'react-svg';
 import { PostCacheInput, cacheUpdate, cacheFlush } from '../actions/postCache.actions';
 import { addPost } from "../actions/post.actions"
 import { PostCacheState } from '../reducers/postCache.reducer';
+import { closeModal } from '../actions/modal.actions';
 
 interface P {
   user: User
@@ -19,7 +19,7 @@ interface P {
   addPost: (Content: string, ImageURL: string | null, Author: string) => any
 } 
 
-class ConnectedAdd extends PureComponent<P> {
+export class ConnectedAdd extends PureComponent<P> {
 
   addPost(e: FormEvent) {
     e.preventDefault()
@@ -122,7 +122,7 @@ const mstp = (state: State) => ({
 })
 
 const mdtp = (dispatch: Dispatch) => ({
-  hide: () => closeNavModal("add")(dispatch),
+  hide: () => closeModal("AddPost")(dispatch),
   updateCache: (input: PostCacheInput) => dispatch(cacheUpdate(input)),
   flushCache: () => dispatch(cacheFlush()),
   addPost: (Content: string, ImageID: string, Author: string) => addPost({Content, ImageID}, Author)(dispatch)

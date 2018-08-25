@@ -24,12 +24,7 @@ const ConnectedPosts = ({ isOpen, closePost, currentPost }: P) => (
           return (
             <Modal onClick={ closePost }>
               {
-                (() => {
-                  switch(!!currentPost.Image) {
-                    case true: return <ImgPost />
-                    case false: return <TxtPost />
-                  }
-                })()
+                (() => currentPost.Image ? <ImgPost/> : <TxtPost/>)()
               }
             </Modal>
           )

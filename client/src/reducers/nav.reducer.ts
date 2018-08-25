@@ -1,21 +1,17 @@
 import { 
   NAV_SECTION_OPEN, 
   NAV_SECTION_CLOSE,
-  NAV_MODAL_OPEN,
-  NAV_MODAL_CLOSE,
   NAV_SECTION_SWITCH 
 } from "../actions/nav.action"
 import { Action } from "redux"
-import Add from "../components/Add.modal";
 
 interface NavItem {
 	name: string
 	href: string
-}
+} 
 
 export interface NavButton {
-  modal: any
-  open: boolean
+  modal: string
   name: string
   icon: string
 }
@@ -59,15 +55,12 @@ export const InitialNavState: NavState = {
     { 
       name: "search", 
       icon: "/svg/search.svg", 
-      modal: () => null,
-      open: false 
+      modal: ""
     },
     { 
       name: "add", 
       icon: "/svg/add.svg",
-      // @ts-ignore 
-      modal: Add,
-      open: false 
+      modal: "AddPost"
     }
   ]
 }
@@ -105,32 +98,6 @@ export function navReducer(nav: NavState = InitialNavState, action: NavAction) {
         ...nav,
 				sections: sc
 			}
-    }
-
-    case NAV_MODAL_OPEN: {
-      const modals = nav.modals
-        .map(item => {
-          item.open = !!(item.name === action.modal)
-          return item
-        })
-
-      return {
-        ...nav,
-        modals
-      }
-    }
-
-    case NAV_MODAL_CLOSE: {
-      const modals = nav.modals
-        .map(item => {
-          item.open = false
-          return item
-        })
-
-      return {
-        ...nav,
-        modals
-      }
     }
 
 		default: return nav
