@@ -2,18 +2,21 @@ import { combineReducers, Action } from "redux"
 import {
   USER_ERRORED,
   USER_LOADED,
-  USER_UNLOADED
+  USER_UNLOADED,
+  USER_PROFILED_LOADED
 } from "../actions/user.actions"
 import { User } from "../dtos/user.dto"
 
 export interface UserState {
   me: null | User
-  error: null | Error
+  error: null | Error,
+  profiled: null | User
 }
 
 export const InitialUserState: UserState = {
   me: null,
   error: null,
+  profiled: null
 }
 
 interface ErrorAction extends Action {
@@ -37,7 +40,18 @@ function _userReducer(user: User | null = null, action: UserAction) {
   }
 }
 
+function profiledReducer(user: User | null = null, action: UserAction) {
+  switch(action.type) {
+    case USER_PROFILED_LOADED: {
+      return action.user
+    }
+
+    default: return user
+  }
+}
+
 export const userReducer = combineReducers<UserState>({
   error: errorReducer,
-  me: _userReducer
+  me: _userReducer,
+  profiled: profiledReducer
 })

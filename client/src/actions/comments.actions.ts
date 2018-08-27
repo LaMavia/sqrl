@@ -82,7 +82,8 @@ export const addComment = (Content: string, Author: string, Post: string) => (di
     .then(r => {
       if(!(r.data && r.data.commentAdd)) throw new Error(`CommentAdd query returned null\nError(s): ${r.errors&&JSON.stringify(r.errors)}`)
 
-      commentsLoaded([r.data.CommentAdd])
+      debugger
+      dispatch(commentsLoaded([r.data.commentAdd]))
     })
     .catch(err => {
       dispatch(commentsErrored(err))

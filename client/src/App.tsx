@@ -10,6 +10,7 @@ import { Dispatch } from "redux";
 import { loginWithID } from "./actions/user.actions";
 import { User } from "./dtos/user.dto";
 import Register from "./routes/Register";
+import UserProfile from "./routes/UserProfile";
 
 interface Props {
 	loginWithID: (_id: string) => any
@@ -36,6 +37,7 @@ class App extends React.PureComponent<Props> {
 						<Route path="/" exact component={Home}/>
 						<Route path="/login" component={Login}/>
 						<Route path="/register" component={Register}/>
+						<Route path="/user/:username" component={UserProfile}/>
 						<Route path="*" render={() => <Redirect to="/"/>}/>
 					</Switch>
 				</div>

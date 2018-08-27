@@ -1,0 +1,15 @@
+:root {
+	--scrollbar-w: 8px;
+}
+
+@mixin Scrollbar {
+	&::-webkit-scrollbar {
+		width: var(--scrollbar-w);
+		background-color: inherit;
+		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
+
+		&-thumb {
+			background-color: #eeeeee;
+		}
+	}
+}

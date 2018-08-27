@@ -343,7 +343,13 @@ html, body {
 }
 
 :root {
+	--scrollbar-w: 8px;
+}
+
+:root {
 	--posts-img-p: 33px;
+	--posts-mobile-p: 12px;
+	--posts-label-h: 3rem;
 }
 
 .home {
@@ -357,6 +363,7 @@ html, body {
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 
   .home {
+    padding-top: 0;
     padding-left: calc(33px - 5px);
     padding-left: calc(var(--posts-img-p) - 5px);
   }
@@ -365,12 +372,13 @@ html, body {
 .posts {
 	width: 100%;
 	height: 100%;
-	display: grid;
-	grid-template: 100% / 64% 1fr;
-	grid-template-areas: 'img txt';
-	grid-column-gap: 33px;
-	grid-column-gap: var(--posts-img-p);
-	overflow: hidden;
+	display: flex;
+	flex-flow: row nowrap
+}
+
+.posts:first-child {
+  margin-right: 33px;
+  margin-right: var(--posts-img-p);
 }
 
 .posts__img, .posts__txt {
@@ -378,12 +386,38 @@ html, body {
 		flex-flow: column nowrap;
 		overflow-y: auto;
 		cursor: pointer;
-	}
+}
+
+.posts__img__label, .posts__txt__label {
+			position: absolute;
+			top: 0;
+			width: 50vw;
+			height: 3rem;
+			height: var(--posts-label-h);
+			background-color: #ffffff;
+			text-align: center;
+			line-height: 3rem;
+			line-height: var(--posts-label-h);
+			font-size: calc(3rem / 2.5);
+			font-size: calc(var(--posts-label-h) / 2.5);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			z-index: 10;
+		}
+
+// Left / right set in .posts__img__label__img, // Left / right set in .posts__txt__label__img{}
+
+and .posts__img__label__txt, and .posts__txt__label__txt{}
+
+@media only screen  and (min-width : 1224px) {
+
+  .posts__img__label, .posts__txt__label {
+    display: none !important;
+  }
+}
 
 .posts__img__switch, .posts__txt__switch {
-			display: block;
-			
-		}
+			display: none;
+}
 
 @media only screen  and (min-width : 1224px) {
 
@@ -392,25 +426,43 @@ html, body {
   }
 }
 
-.posts__img__switch ~ *, .posts__txt__switch ~ * {
+.posts__img__switch ~ *:not(label), .posts__txt__switch ~ *:not(label) {
   display: none !important;
 }
 
 @media only screen  and (min-width : 1224px) {
 
-  .posts__img__switch ~ *, .posts__txt__switch ~ * {
+  .posts__img__switch ~ *:not(label), .posts__txt__switch ~ *:not(label) {
     display: block !important;
+    width: auto;
   }
 }
 
-.posts__img__switch:checked ~ *, .posts__txt__switch:checked ~ * {
+.posts__img__switch:checked ~ *:not(label), .posts__txt__switch:checked ~ *:not(label) {
   display: block !important;
 }
 
-.posts__img {
-		grid-area: img;
-		height: auto;
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .posts__img__switch:checked ~ *:not(label), .posts__txt__switch:checked ~ *:not(label) {
+    // width: 100vw;
+    z-index: 20;
+  }
 }
+
+.posts__img__switch:checked ~ label, .posts__txt__switch:checked ~ label {
+  background-color: #009688;
+  color: #ffffff;
+}
+
+.posts__img {
+		height: auto;
+		flex: 2 0 10%;
+}
+
+.posts__img__label {
+			left: 0;
+		}
 
 .posts__img__list {
 			width: 100%;
@@ -418,10 +470,16 @@ html, body {
 			column-count: 3;
 			column-gap: 33px;
 			column-gap: var(--posts-img-p);
-			padding-right: 33px;
-			padding-right: var(--posts-img-p);
-			padding-left: 5px;
 		}
+
+@media only screen  and (min-width : 1224px) {
+
+  .posts__img__list {
+    padding-right: 33px;
+    padding-right: var(--posts-img-p);
+    padding-left: 5px;
+  }
+}
 
 @media only screen and (min-device-width : 500px) and (max-device-width : 1024px) and (orientation : portrait) {
 
@@ -430,14 +488,22 @@ html, body {
   }
 }
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .posts__img__list {
+    column-count: 1;
+  }
+}
+
 .posts__img__list::-webkit-scrollbar {
   width: 8px;
+  width: var(--scrollbar-w);
   background-color: inherit;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
 }
 
 .posts__img__list::-webkit-scrollbar-thumb {
-					background-color: #eeeeee;
+			background-color: #eeeeee;
 }
 
 .posts__img__list__item {
@@ -476,7 +542,18 @@ html, body {
 					}
 
 .posts__txt {
-		grid-area: txt;
+		flex: 1 0 10%;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .posts__txt {
+    flex: 0 0 100%;
+  }
+}
+
+.posts__txt__label {
+			right: 0;
 }
 
 .posts__txt__list {
@@ -485,7 +562,18 @@ html, body {
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
-		}
+}
+
+.posts__txt__list::-webkit-scrollbar {
+  width: 8px;
+  width: var(--scrollbar-w);
+  background-color: inherit;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
+}
+
+.posts__txt__list::-webkit-scrollbar-thumb {
+			background-color: #eeeeee;
+}
 
 .posts__txt__list__item {
 	margin-top: 1px !important;
@@ -496,7 +584,7 @@ html, body {
 	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
 	width: 98%;
 	margin: 0 auto 33px auto;
-			}
+}
 
 .posts__txt__list__item__body {
 		padding: 0 15px;
@@ -504,6 +592,35 @@ html, body {
 		margin-bottom: 15px;
 		white-space: pre-line;
 	}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .posts__txt, .posts__img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: calc(100vh - 3rem);
+			height: calc(100vh - var(--posts-label-h));
+			width: 100vw;
+			padding-top: 3rem;
+			padding-top: var(--posts-label-h);
+			overflow-y: auto;
+  }
+			.posts__txt__list, .posts__img__list {
+				padding: 
+					12px 
+					calc(12px - 8px) 
+					12px 
+					12px
+				;
+				padding: 
+					var(--posts-mobile-p) 
+					calc(var(--posts-mobile-p) - var(--scrollbar-w)) 
+					var(--posts-mobile-p) 
+					var(--posts-mobile-p)
+				;
+			}
+}
 
 .modal {
   position: fixed;
@@ -645,23 +762,35 @@ html, body {
 .post__aside__comments {
 			padding: 20px;
 			width: 100%;
-			height: auto;
-			list-style: none;
+			height: 100%;
+			overflow-y: auto;
+			list-style: none
 		}
+
+.post__aside__comments::-webkit-scrollbar {
+  width: 8px;
+  width: var(--scrollbar-w);
+  background-color: inherit;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
+}
+
+.post__aside__comments::-webkit-scrollbar-thumb {
+			background-color: #eeeeee;
+}
 
 .post__aside__comments__item {
 				height: auto;	
 				background-color: #ffffff;
 				box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
 				margin-bottom: 20px;
-			}
+}
 
 .post__aside__comments__item__author {
 					margin-right: 6px;
 					grid-template-columns: 1fr calc(6vh / 1.5) !important;
 					grid-template-columns: 1fr var(--und-img-s) !important;
 					grid-template-areas:
-						'author img'
+						'user img'
 						'date img' !important;
 					text-align: right !important;
 				}
@@ -743,6 +872,12 @@ html, body {
 	--und-img-s: calc(var(--und-h) / 1.5);
 }
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	:root {
+		--und-h: 10vh;
+	}
+  }
+
 .und {
 	--txt-h: calc(calc(6vh / 1.5) / 2);
 	--txt-h: calc(var(--und-img-s) / 2);
@@ -752,13 +887,12 @@ html, body {
 	grid-template: repeat(2, var(--txt-h)) / calc(6vh / 1.5) 1fr;
 	grid-template: repeat(2, var(--txt-h)) / var(--und-img-s) 1fr;
 	grid-template-areas:
-		'img author'
+		'img user'
 		'img date';
 	padding: calc((6vh - calc(6vh / 1.5)) / 2) 0;
 	padding: calc((var(--und-h) - var(--und-img-s)) / 2) 0;
 	column-gap: 10px;
 	padding-left: 15px;
-
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -771,17 +905,20 @@ html, body {
 		margin: auto;
 	}
 
-.und__author, .und__date {
-		font-size: 0.875rem;
+.und__user, .und__date {
 		line-height: var(--txt-h);
 		line-height: var(--txt-h);
+		text-decoration: none;
+		color: #1d1d1d;
 	}
 
-.und__author {
-		grid-area: author;
+.und__user {
+		font-size: 1rem;
+		grid-area: user;
 	}
 
 .und__date {
+		font-size: 0.8125rem;
 		grid-area: date;
 	}
 
@@ -916,6 +1053,62 @@ html, body {
 .add__bottom__btn--submit .add__bottom__btn__txt {
           color: #009688;
         }
+
+:root {
+  --profile-background-url: "";
+  --profile-image-s: 16rem;
+}
+
+@media only screen  and (min-width : 1224px) {
+
+  .profile {
+    padding-left: 60px;
+    padding-left: var(--nav-w);
+  }
+}
+
+.profile__header {
+    background: "" center fixed no-repeat;
+    background: var(--profile-background-url) center fixed no-repeat;
+    background-size: cover;
+    height: 60vh;
+    position: relative;
+}
+
+.profile__header__info {
+      position: absolute;
+      left: 50%;
+      bottom: 10%;
+      transform: translate(-50%, 0%);
+      height: 50%;
+      height: auto;
+      width: 16rem;
+      width: var(--profile-image-s);
+      overflow: hidden;
+    }
+
+.profile__header__info__img {
+        width: 16rem;
+        width: var(--profile-image-s);
+        height: var(--profile-image-s);
+        border-radius: 50%;
+      }
+
+.profile__header__info__name {
+        text-align: center;
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-size: 2rem;
+      }
+
+.profile__posts {
+    position: relative;
+}
+
+.profile__posts .posts {
+      padding: 33px;
+      height: 100vh;
+    }
 
 .injected-svg {
   margin: auto;

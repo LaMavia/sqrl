@@ -1,4 +1,5 @@
 @import './_breakpoints.pcss';
+@import './_mixins.pcss';
 
 :root {
 	--post-h: 60vh;
@@ -100,8 +101,11 @@
 		&__comments {
 			padding: 20px;
 			width: 100%;
-			height: auto;
+			height: 100%;
+			overflow-y: auto;
 			list-style: none;
+
+			@include Scrollbar;
 
 			&__item {
 				height: auto;	
@@ -113,7 +117,7 @@
 					margin-right: 6px;
 					grid-template-columns: 1fr var(--und-img-s) !important;
 					grid-template-areas:
-						'author img'
+						'user img'
 						'date img' !important;
 					text-align: right !important;
 				}

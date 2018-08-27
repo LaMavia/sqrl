@@ -1,4 +1,5 @@
 @import './_breakpoints.pcss';
+@import './_mixins.pcss';
 
 @mixin Item() {
 	margin-top: 1px !important;
@@ -20,6 +21,8 @@
 
 :root {
 	--posts-img-p: 33px;
+	--posts-mobile-p: 12px;
+	--posts-label-h: 3rem;
 }
 
 .home {
@@ -29,6 +32,7 @@
 	overflow: hidden;
 
 	@include phone {
+		padding-top: 0;
 		padding-left: calc(var(--posts-img-p) - 5px);
 	}
 }
@@ -36,11 +40,11 @@
 .posts {
 	width: 100%;
 	height: 100%;
-	display: grid;
-	grid-template: 100% / 64% 1fr;
-	grid-template-areas: 'img txt';
-	grid-column-gap: var(--posts-img-p);
-	overflow: hidden;
+	display: flex;
+	flex-flow: row nowrap;
+	&:first-child {
+		margin-right: var(--posts-img-p);
+	}
 
 	&__img,
 	&__txt {
@@ -49,48 +53,75 @@
 		overflow-y: auto;
 		cursor: pointer;
 
+		&__label {
+			position: absolute;
+			top: 0; // Left / right set in &__img{} and &__txt{}
+			width: 50vw;
+			height: var(--posts-label-h);
+			background-color: #ffffff;
+			text-align: center;
+			line-height: var(--posts-label-h);
+			font-size: calc(var(--posts-label-h) / 2.5);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			z-index: 10;
+
+			@include desktop {
+				display: none !important;
+			}
+		}
+
 		&__switch {
-			display: block;
+			display: none;
 			@include desktop {
 				display: none;
 			}
-			& ~ * {
+			& ~ *:not(label) {
 				display: none !important;
 				@include desktop {
 					display: block !important;
+					width: auto;
 				}
 			}
-			&:checked ~ * {
+
+			&:checked ~ *:not(label) {
 				display: block !important;
+				@include phone {
+					// width: 100vw;
+					z-index: 20;
+				}
 			}
-			
+			&:checked ~ label {
+				background-color: #009688;
+				color: #ffffff;
+			}
 		}
 	}
 
 	&__img {
-		grid-area: img;
 		height: auto;
-
+		flex: 2 0 10%;
+		&__label {
+			left: 0;
+		}
 		&__list {
 			width: 100%;
 			overflow-y: auto;
 			column-count: 3;
 			column-gap: var(--posts-img-p);
-			padding-right: var(--posts-img-p);
-			padding-left: 5px;
+
+			@include desktop {
+				padding-right: var(--posts-img-p);
+				padding-left: 5px;
+			}
 			@include tablet-ver {
 				column-count: 2;
 			}
 
-			&::-webkit-scrollbar {
-				width: 8px;
-				background-color: inherit;
-				box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
-
-				&-thumb {
-					background-color: #eeeeee;
-				}
+			@include phone {
+				column-count: 1;
 			}
+
+			@include Scrollbar;
 
 			&__item {
 				@include Item;
@@ -116,17 +147,43 @@
 	}
 
 	&__txt {
-		grid-area: txt;
-
+		flex: 1 0 10%;
+		@include phone {
+			flex: 0 0 100%;
+		}
+		&__label {
+			right: 0;
+		}
 		&__list {
 			display: flex;
 			flex-flow: column nowrap;
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
+			@include Scrollbar;
 
 			&__item {
 				@include Item;
+			}
+		}
+	}
+
+	@include phone {
+		&__txt, &__img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: calc(100vh - var(--posts-label-h));
+			width: 100vw;
+			padding-top: var(--posts-label-h);
+			overflow-y: auto;
+			&__list {
+				padding: 
+					var(--posts-mobile-p) 
+					calc(var(--posts-mobile-p) - var(--scrollbar-w)) 
+					var(--posts-mobile-p) 
+					var(--posts-mobile-p)
+				;
 			}
 		}
 	}

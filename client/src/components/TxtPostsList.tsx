@@ -23,6 +23,7 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 		return (
 			<section className="posts__txt">
 				<input className="posts__txt__switch" type="radio" name="switch" id="switch_txt"/>
+				<label htmlFor="switch_txt" className="posts__txt__label">Posts</label>
 				<ul className="posts__txt__list">
 				{this.props.posts.list.map((post, i, arr) => {
 					const author: User | undefined = post.Author
