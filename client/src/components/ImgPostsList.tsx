@@ -5,7 +5,6 @@ import PostBtns from "./PostBtns";
 import UserAndDate from "./UserAndDate";
 import { mdtp, makeMSTP } from "../mappers/postList.mapper";
 import { P } from "../interfaces/postsList";
-import { compare } from "../functions/compare";
 
 class connectedImgPosts extends React.PureComponent<P, {}> {
 	constructor(props: P) {
@@ -28,7 +27,7 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 				<ul className="posts__img__list">
 				
 					{this.props.posts.list
-						.filter((post) => this.props.filter ? compare(this.props.filter, post) : true)
+						.filter(this.props.filter||(() => true))
 						.map((post, i, arr) => {
 							const author: User | undefined = post.Author
 							const d = new Date(post.Date)

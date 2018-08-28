@@ -65,7 +65,8 @@ export const getUser = (apiURL: string, conditions: string) =>
 				.then(res => res.json())
 				.then(({data}) => dispatch(userLoaded(data.User)))
 				.catch(err => dispatch(userErrored(new Error(err))))
-				.finally(() => dispatch(userIsLoading(false)))
+				// .finally(() => dispatch(userIsLoading(false)))
+				dispatch(userIsLoading(false))
 
 		}
 
@@ -140,7 +141,8 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const loginWithID = (apiURL: string, _id: string) =>
@@ -184,7 +186,8 @@ export const loginWithID = (apiURL: string, _id: string) =>
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const logoutUser = (dispatch: Dispatch) => {
@@ -243,7 +246,8 @@ export const registerUser = (apiURL: string, Username: string, Password: string,
 				}	
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const setError = 

@@ -50,13 +50,9 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
       if(res) {
         let Image = null
-        const Author = extract(
-          await Shadow.GetFromDB("User", {_id: String(res.Author)}, 1)
-        ) 
+        const Author = await Shadow.Resolve(res.Author, "User")
         if(res.Image) {
-          Image = extract(
-            await Shadow.GetFromDB("Image", { _id: String(res.Image) }, 1)
-          )
+          Image = await Shadow.Resolve(res.Image, "Image")
         }
         const out = Object.assign(
           {}, res._doc,
@@ -74,18 +70,14 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
         const out = []
         for(const post of res) {
           let Image = null
-          const Author = prepare(extract(
-            await Shadow.GetFromDB("User", {_id: String(post.Author)}, 1)
-          ))
+          const Author = await Shadow.Resolve(post.Author, "User")
           if(post.Image) {
-            Image = prepare(extract(
-              await Shadow.GetFromDB("Image", { _id: String(post.Image) }, 1)
-            )).Img
+            Image = (await Shadow.Resolve(post.Image, "Image"))
           }
           
           out.push(Object.assign(
             {}, post._doc || post,
-            { Author, Image }
+            { Author, Image: Image ? Image.Img : null }
           ))
         }
         return out.map(prepare)
@@ -114,14 +106,14 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
       if(res) {
         let image = null
-        const author: User | undefined = extract(await Shadow.GetFromDB("User", { _id: Author }, 1)) 
+        const author: User | undefined = await Shadow.Resolve(Author as any, "User")
         if(ImageID) {
-          image = extract(await Shadow.GetFromDB("Image", { _id: ImageID }, 1))
+          image = (await Shadow.Resolve(ImageID as any, "Image"))
         }
 
         const out = Object.assign({}, res._doc, { 
-          Author: prepare(author),
-          Image: image ? prepare(image).Img : null
+          Author: author,
+          Image: image ? image.Img : null
         })
 
         return out

@@ -350,6 +350,7 @@ html, body {
 	--posts-img-p: 33px;
 	--posts-mobile-p: 12px;
 	--posts-label-h: 3rem;
+	--posts-label-w: 50%;
 }
 
 .home {
@@ -388,25 +389,57 @@ html, body {
 		cursor: pointer;
 }
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .posts__img, .posts__txt {
+    width: 100vw;
+  }
+}
+
+@media only screen and (min-device-width : 500px) and (max-device-width : 1024px) and (orientation : portrait) {
+
+  .posts__img, .posts__txt {
+    width: calc(100vw - 60px);
+    width: calc(100vw - var(--nav-w));
+  }
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+
+  .posts__img, .posts__txt {
+    width: calc(100vw - 60px);
+    width: calc(100vw - var(--nav-w));
+  }
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+
+  .posts__img__label, .posts__txt__label {
+    --posts-label-w: calc((100vw - 60px) / 2);
+    --posts-label-w: calc((100vw - var(--nav-w)) / 2);
+  }
+}
+
 .posts__img__label, .posts__txt__label {
-			position: absolute;
-			top: 0;
-			width: 50vw;
-			height: 3rem;
-			height: var(--posts-label-h);
-			background-color: #ffffff;
-			text-align: center;
-			line-height: 3rem;
-			line-height: var(--posts-label-h);
-			font-size: calc(3rem / 2.5);
-			font-size: calc(var(--posts-label-h) / 2.5);
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			z-index: 10;
-		}
+  position: absolute;
+  top: 0;
+  width: 50%;
+  width: var(--posts-label-w);
+  height: 3rem;
+  height: var(--posts-label-h);
+  background-color: #ffffff;
+  text-align: center;
+  line-height: 3rem;
+  line-height: var(--posts-label-h);
+  font-size: calc(3rem / 2.5);
+  font-size: calc(var(--posts-label-h) / 2.5);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 10;
+}
 
-// Left / right set in .posts__img__label__img, // Left / right set in .posts__txt__label__img{}
+// Left / right set in .posts__img__label__img, // Left / right set in .posts__txt__label__img {}
 
-and .posts__img__label__txt, and .posts__txt__label__txt{}
+and .posts__img__label__txt, and .posts__txt__label__txt {}
 
 @media only screen  and (min-width : 1224px) {
 
@@ -417,13 +450,6 @@ and .posts__img__label__txt, and .posts__txt__label__txt{}
 
 .posts__img__switch, .posts__txt__switch {
 			display: none;
-}
-
-@media only screen  and (min-width : 1224px) {
-
-  .posts__img__switch, .posts__txt__switch {
-    display: none;
-  }
 }
 
 .posts__img__switch ~ *:not(label), .posts__txt__switch ~ *:not(label) {
@@ -442,10 +468,9 @@ and .posts__img__label__txt, and .posts__txt__label__txt{}
   display: block !important;
 }
 
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+@media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
 
   .posts__img__switch:checked ~ *:not(label), .posts__txt__switch:checked ~ *:not(label) {
-    // width: 100vw;
     z-index: 20;
   }
 }
@@ -533,7 +558,7 @@ and .posts__img__label__txt, and .posts__txt__label__txt{}
 				}
 
 .posts__img__list__item__body__img {
-						width: 100%;
+						width: 100%; 
 					}
 
 .posts__img__list__item__body__content {
@@ -593,19 +618,19 @@ and .posts__img__label__txt, and .posts__txt__label__txt{}
 		white-space: pre-line;
 	}
 
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+@media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
 
   .posts__txt, .posts__img {
 			position: absolute;
 			top: 0;
-			left: 0;
+			right: 0;
 			height: calc(100vh - 3rem);
 			height: calc(100vh - var(--posts-label-h));
-			width: 100vw;
 			padding-top: 3rem;
 			padding-top: var(--posts-label-h);
 			overflow-y: auto;
   }
+
 			.posts__txt__list, .posts__img__list {
 				padding: 
 					12px 

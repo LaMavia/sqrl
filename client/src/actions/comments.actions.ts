@@ -56,7 +56,8 @@ export const getComments = (conditions: string) => (dispatch: Dispatch) => {
       throw new Error("Failed fetching comments")
     })
     .catch(err => dispatch(commentsErrored(err)))
-    .finally(() => dispatch(commentsAreLoading(false)))
+    // .finally(() => dispatch(commentsAreLoading(false)))
+    dispatch(commentsAreLoading(false))
 }
 
 export const addComment = (Content: string, Author: string, Post: string) => (dispatch: Dispatch) => {

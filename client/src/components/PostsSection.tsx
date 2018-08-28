@@ -7,14 +7,15 @@ import { Dispatch } from "redux";
 import { postOpen } from "../actions/post.actions";
 import Modal from "./Modal";
 import ImgPost from "./ImgPost";
-import { Post, LooseObject } from "../types";
+import { Post } from "../types";
 import TxtPost from "./TxtPost";
+import { PostsFilter } from "../interfaces/postsList";
 
 interface P {
   isOpen: boolean
   closePost: () => any
   currentPost: Post | null
-  filter?: LooseObject
+  filter?: PostsFilter
 }
 
 const ConnectedPosts = ({ isOpen, closePost, currentPost, filter }: P) => (

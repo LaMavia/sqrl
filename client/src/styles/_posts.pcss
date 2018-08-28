@@ -23,6 +23,7 @@
 	--posts-img-p: 33px;
 	--posts-mobile-p: 12px;
 	--posts-label-h: 3rem;
+	--posts-label-w: 50%;
 }
 
 .home {
@@ -53,10 +54,25 @@
 		overflow-y: auto;
 		cursor: pointer;
 
+		@include phone {
+			width: 100vw;
+		}
+
+		@include tablet-ver {
+			width: calc(100vw - var(--nav-w));
+		}
+
+		@include tablet-hor {
+			width: calc(100vw - var(--nav-w));
+		}
+
 		&__label {
+			@include tablet-hor {
+				--posts-label-w: calc((100vw - var(--nav-w)) / 2); 
+			}
 			position: absolute;
 			top: 0; // Left / right set in &__img{} and &__txt{}
-			width: 50vw;
+			width: var(--posts-label-w);
 			height: var(--posts-label-h);
 			background-color: #ffffff;
 			text-align: center;
@@ -72,9 +88,7 @@
 
 		&__switch {
 			display: none;
-			@include desktop {
-				display: none;
-			}
+
 			& ~ *:not(label) {
 				display: none !important;
 				@include desktop {
@@ -85,8 +99,7 @@
 
 			&:checked ~ *:not(label) {
 				display: block !important;
-				@include phone {
-					// width: 100vw;
+				@include mobile {
 					z-index: 20;
 				}
 			}
@@ -134,7 +147,7 @@
 					height: auto;
 
 					&__img {
-						width: 100%;
+						width: 100%; 
 					}
 
 					&__content {
@@ -168,15 +181,15 @@
 		}
 	}
 
-	@include phone {
+	@include mobile {
 		&__txt, &__img {
 			position: absolute;
 			top: 0;
-			left: 0;
+			right: 0;
 			height: calc(100vh - var(--posts-label-h));
-			width: 100vw;
 			padding-top: var(--posts-label-h);
 			overflow-y: auto;
+
 			&__list {
 				padding: 
 					var(--posts-mobile-p) 

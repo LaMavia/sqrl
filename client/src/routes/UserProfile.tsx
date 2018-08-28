@@ -1,6 +1,5 @@
 import React from 'react'
 import { State } from '../store'
-import { UserState } from '../reducers/user.reducer'
 import { RouteComponentProps } from 'react-router-dom'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
@@ -47,7 +46,7 @@ class connectedUser extends React.Component<Props> {
 			</div>
 		)
 	}
-}
+} 
 
 const mapStateToProps = (state: State) => ({
 	me: state.user.me,
