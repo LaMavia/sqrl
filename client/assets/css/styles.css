@@ -435,6 +435,7 @@ html, body {
   font-size: calc(var(--posts-label-h) / 2.5);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   z-index: 10;
+  box-shadow: 0 0px 0 1px rgba(0, 0, 0, 0.16);
 }
 
 // Left / right set in .posts__img__label__img, // Left / right set in .posts__txt__label__img {}
@@ -656,6 +657,7 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
   width: calc(100vw - var(--nav-item-s));
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
 }
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
@@ -707,10 +709,31 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .post {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    flex-flow: column;
+  }
+
+  .post::-webkit-scrollbar {
+    width: 8px;
+    width: var(--scrollbar-w);
+    background-color: inherit;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.17);
+  }
+
+  .post::-webkit-scrollbar-thumb {
+			background-color: #eeeeee;
+  }
+}
+
 .post--txt {
 		--post-aside-w: 20rem;
 		background-color: #ffffff;
-	}
+}
 
 .post--txt .post__aside {
 			height: 60vh;
@@ -740,7 +763,15 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 .post__img {
 		height: 100%;
 		width: auto;
-	}
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .post__img {
+    height: auto;
+    width: 100vw;
+  }
+}
 
 .post__body {
 	width: 100%;
@@ -748,9 +779,20 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 	overflow: hidden;
 	margin: 15px 0 6px 0;
 	white-space: pre-line;
-		width: 30rem;
-		width: var(--post-body-w);
-	}
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .post__body {
+    height: auto;
+  }
+}
+
+.post__body {
+  width: 30rem;
+  width: var(--post-body-w);
+  height: auto;
+}
 
 .post__header {
 		height: 6vh;
@@ -758,14 +800,14 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 		width: 100%;
 		display: flex;
 		flex-flow: row nowrap;
-	}
+}
 
 .post__aside {
 		width: 20rem;
 		width: var(--post-aside-w);
 		position: relative;
 		background-color: #f5f5f5;
-	}
+}
 
 .post__aside__header {
 			background-color: #ffffff;
@@ -784,13 +826,20 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 	white-space: pre-line;
 			}
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .post__aside__header__body {
+    height: auto;
+  }
+}
+
 .post__aside__comments {
 			padding: 20px;
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
-			list-style: none
-		}
+			list-style: none;
+}
 
 .post__aside__comments::-webkit-scrollbar {
   width: 8px;
@@ -843,7 +892,7 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 			background-color: #ffffff;
 			box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
 			border: none;
-		}
+}
 
 :root .btns {
 		--h: 5vh;
