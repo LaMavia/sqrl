@@ -10,6 +10,10 @@
 		flex-flow: row nowrap;
 		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
 
+		@include mobile {
+			--h: 3rem;
+		}
+
 		&__btn {
 			--c: #707070;
 			display: flex;

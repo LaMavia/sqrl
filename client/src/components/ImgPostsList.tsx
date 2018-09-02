@@ -1,16 +1,14 @@
 import React from "react"
-import { connect } from "react-redux"
 import { User } from "../dtos/user.dto"
 import PostBtns from "./PostBtns";
 import UserAndDate from "./UserAndDate";
 import { mdtp, makeMSTP } from "../mappers/postList.mapper";
 import { P } from "../interfaces/postsList";
+import { connectComponent } from "../decorators/redux";
 
-class connectedImgPosts extends React.PureComponent<P, {}> {
-	constructor(props: P) {
-		super(props)
-	}
-
+const mstp = makeMSTP(true)
+@connectComponent(mstp, mdtp)
+export default class connectedImgPosts extends React.PureComponent<P> {
 	componentDidMount() {
 		this.props.authors.forEach(({ _id }) => 
 			_id&&this.props.getPosts(`${location.origin}/graphql`, `Author: "${_id}"`),
@@ -53,7 +51,3 @@ class connectedImgPosts extends React.PureComponent<P, {}> {
 		)
 	}
 }
-
-const mstp = makeMSTP(true)
-// @ts-ignore
-export default connect(mstp, mdtp)(connectedImgPosts)

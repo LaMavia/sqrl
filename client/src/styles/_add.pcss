@@ -1,3 +1,5 @@
+@import "./_breakpoints.pcss";
+
 @mixin resetButton() {
 	-webkit-appearance: none;
 	appearance: none;
@@ -16,6 +18,12 @@
 	--add-modal-bottom-p: 5px;
   --add-modal-bottom-btn-s: 2rem;
 	--add-modal-profile-img-s: 2.5rem;
+}
+
+@include phone {
+	:root {
+		--add-modal-w: 100vw;
+	}
 }
 
 .add {

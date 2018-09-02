@@ -1,13 +1,23 @@
 import React, { PureComponent, FormEvent } from 'react'
 import { User } from '../dtos/user.dto';
 import Modal from './Modal';
-import { connect } from 'react-redux';
 import { State } from '../store';
 import { Dispatch } from 'redux';
 import ReactSVG from 'react-svg';
 import { Post } from '../dtos/post.dto';
 import { closeModal } from '../actions/modal.actions';
 import { addComment } from '../actions/comments.actions';
+import { connectComponent } from '../decorators/redux';
+
+const mstp = (state: State) => ({
+  user: state.user.me,
+  post: state.posts.currentPost
+})
+
+const mdtp = (dispatch: Dispatch) => ({
+  addComment: (Content: string, Author: string, Post: string) => addComment(Content, Author, Post)(dispatch),
+  hide: () => closeModal("AddComment")(dispatch)
+})
 
 interface P {
   user: User
@@ -16,7 +26,8 @@ interface P {
   addComment: (Content: string, Author: string, Post: string) => any
 } 
 
-export class ConnectedAdd extends PureComponent<P> {
+@connectComponent(mstp, mdtp)
+export default class ConnectedAdd extends PureComponent<P> {
 
   constructor(props: any) {
     super(props)
@@ -63,16 +74,3 @@ export class ConnectedAdd extends PureComponent<P> {
     )
   }
 }
-
-const mstp = (state: State) => ({
-  user: state.user.me,
-  post: state.posts.currentPost
-})
-
-const mdtp = (dispatch: Dispatch) => ({
-  addComment: (Content: string, Author: string, Post: string) => addComment(Content, Author, Post)(dispatch),
-  hide: () => closeModal("AddComment")(dispatch)
-})
-
-// @ts-ignore
-export default connect(mstp, mdtp)(ConnectedAdd)

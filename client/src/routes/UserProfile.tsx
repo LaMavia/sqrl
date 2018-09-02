@@ -2,11 +2,13 @@ import React from 'react'
 import { State } from '../store'
 import { RouteComponentProps } from 'react-router-dom'
 import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
 import { Posts } from '../components/PostsSection'
 import { Modal } from '../reducers/modal.reducer'
 import { getUserProfile } from '../actions/user.actions'
 import { User } from '../dtos/user.dto';
+import { Post } from '../dtos/post.dto';
+import { connectComponent } from '../decorators/redux';
 
 interface Props extends RouteComponentProps<{ username: string }> {
 	me: User
@@ -15,7 +17,18 @@ interface Props extends RouteComponentProps<{ username: string }> {
 	getUser: (username: string) => any
 }
 
-class connectedUser extends React.Component<Props> {
+const mapStateToProps = (state: State) => ({
+	me: state.user.me,
+	modals: state.modal,
+	user: state.user.profiled
+})
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+	getUser: (username: string) =>
+		getUserProfile(username)(dispatch),
+})
+
+@connectComponent(mapStateToProps, mapDispatchToProps)
+export default class connectedUser extends React.Component<Props> {
 	constructor(props: any) {
 		super(props)
 	}
@@ -37,7 +50,7 @@ class connectedUser extends React.Component<Props> {
 					</div>
 				</header>
 				<section className="profile__posts">
-					<Posts filter={{}} />
+					<Posts filter={(post: Post) => post.Author.Username === this.props.user.Username} />
 				</section>
 				{(() =>
 					this.props.modals
@@ -47,15 +60,3 @@ class connectedUser extends React.Component<Props> {
 		)
 	}
 } 
-
-const mapStateToProps = (state: State) => ({
-	me: state.user.me,
-	modals: state.modal,
-	user: state.user.profiled
-})
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-	getUser: (username: string) =>
-		getUserProfile(username)(dispatch),
-})
-// @ts-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(connectedUser)

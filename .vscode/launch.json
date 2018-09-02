@@ -20,7 +20,7 @@
       "name": "typescript",
       "runtimeArgs": [
         "-r",
-        "ts-node/register"
+        "ts-node\/register"
       ],
       "args": [
         "${file}"
@@ -32,11 +32,23 @@
       "name": "Debug server",
       "runtimeArgs": [
         "-r",
-        "ts-node/register"
+        "ts-node\/register"
       ],
       "args": [
-        "${workspaceFolder}/server/app.ts"
+        "${workspaceFolder}\/server\/app.ts"
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest Current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${relativeFile}"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      }
     }
   ]
 }

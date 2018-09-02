@@ -346,6 +346,12 @@ html, body {
 	--scrollbar-w: 8px;
 }
 
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	:root {
+		--scrollbar-w: 0;
+	}
+  }
+
 :root {
 	--posts-img-p: 33px;
 	--posts-mobile-p: 12px;
@@ -541,9 +547,19 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
 	width: 98%;
 	margin: 0 auto 33px auto;
-				width: 100%;
-				overflow: hidden;
-				display: inline-block;
+}
+
+@media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
+
+  .posts__img__list__item {
+    width: 100%;
+  }
+}
+
+.posts__img__list__item {
+  width: 100%;
+  overflow: hidden;
+  display: inline-block;
 }
 
 .posts__img__list__item__body {
@@ -551,12 +567,12 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 		font-weight: 200;
 		margin-bottom: 15px;
 		white-space: pre-line;
-	}
+}
 
 .posts__img__list__item__body {
 					padding: 0;
 					height: auto;
-				}
+}
 
 .posts__img__list__item__body__img {
 						width: 100%; 
@@ -612,12 +628,19 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 	margin: 0 auto 33px auto;
 }
 
+@media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
+
+  .posts__txt__list__item {
+    width: 100%;
+  }
+}
+
 .posts__txt__list__item__body {
 		padding: 0 15px;
 		font-weight: 200;
 		margin-bottom: 15px;
 		white-space: pre-line;
-	}
+}
 
 @media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
 
@@ -679,6 +702,13 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
     top: 0;
     width: 100%;
     height: 100%;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+
+  .modal__click-catcher {
+    z-index: 0;
+  }
 }
 
 :root {
@@ -834,7 +864,9 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 }
 
 .post__aside__comments {
-			padding: 20px;
+			--p: 20px;
+			padding: var(--p) var(--p) calc(var(--p) * 2) var(--p);
+			padding: var(--p) var(--p) calc(var(--p) * 2) var(--p);
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
@@ -907,6 +939,13 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 		padding: calc((var(--h) - var(--item-h)) / 2) 15px;
 	}
 
+@media only screen and (max-device-width : 1024px) and (min-device-width : 320px) {
+
+  :root .btns {
+    --h: 3rem;
+  }
+}
+
 :root .btns__btn {
 			--c: #707070;
 			display: flex;
@@ -917,7 +956,7 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
 			background-color: transparent;
 			margin-right: 13px;
       cursor: pointer;
-		}
+}
 
 :root .btns__btn__icon svg {
 				height: var(--item-h);
@@ -1011,6 +1050,12 @@ and .posts__img__label__txt, and .posts__txt__label__txt {}
   --add-modal-bottom-btn-s: 2rem;
 	--add-modal-profile-img-s: 2.5rem;
 }
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	:root {
+		--add-modal-w: 100vw;
+	}
+  }
 
 .add {
 	position: fixed;

@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import express, { NextFunction } from "express"
+import express from "express"
 import { ApolloServer, mergeSchemas } from "apollo-server-express"
 import { GraphQLSchema } from "graphql"
 // import { makeExecutableSchema } from "graphql-tools"
@@ -12,6 +12,7 @@ import Mail from "nodemailer/lib/mailer"
 import { MailOptions } from "nodemailer/lib/stream-transport";
 import { extract } from "./functions/extract";
 import prepare from "./functions/prepare";
+import { TryChatch } from "./decorators/debug";
 /**
  * @todo Add CMS routes \w handlers
 */
@@ -98,6 +99,7 @@ export default class Shadow {
 		this.stdin.addListener("data", this.inputHandler.bind(this))
 	}
 
+	@TryChatch()
 	inputHandler(_d: any) {
 		const d = String(_d).trim()
 		;(function () {
@@ -105,7 +107,7 @@ export default class Shadow {
 			function print(txt: any, ...args) {
 				console.dir(txt, {colors: true, depth: 8, ...args})
 			}
-			try{
+			try {
 				print(eval(d))
 			}
 			catch (e) {
@@ -114,7 +116,8 @@ export default class Shadow {
 		}).bind(this)()
 	}
 
-	private InitApollo(graphqlSchemas: GraphQLSchema[], graphqlResolvers: iShadow.ResolverConstruct<any, any>[]) {
+	@TryChatch()
+	InitApollo(graphqlSchemas: GraphQLSchema[], graphqlResolvers: iShadow.ResolverConstruct<any, any>[]) {
 		// @ts-ignore
 		const schema: GraphQLSchema = mergeSchemas({
 			schemas: graphqlSchemas,
@@ -136,30 +139,21 @@ export default class Shadow {
 		return apollo
 	}
 
-	private InitMiddleware() {
+	@TryChatch()
+	InitMiddleware() {
 		this.middleware.forEach(mdlw => this.app.use(mdlw))
-		/*
-		function* gen(middleware: RequestHandler[]): IterableIterator<RequestHandler> {
-			for(const mdw of middleware) {
-				yield mdw
-			}
-		}
-
-		for (const mdw of gen(this.middleware)) {
-			this.app.use(mdw)
-		}
-		*/
-
 	}
 
-	private InitRoutes() {
+	@TryChatch()
+	InitRoutes() {
 		this.routes.forEach(( route: iShadow.Route ) => {
 			const passedData = this // Object.freeze(Object.assign({}, this))
 			this.app.use(route.path, route.handler(passedData))
 		})
 	}
 
-	private InitAPI() {
+	@TryChatch()
+	InitAPI() {
 		this.APIRoutes.forEach((route: iShadow.APIRoute) => {
 			const handler = route.handler(this)
 			switch(route.method) {
@@ -172,18 +166,19 @@ export default class Shadow {
 		}, this)
 	}
  
-	private InitModels() {
+	@TryChatch()
+	InitModels() {
 		this.dbSchemas.forEach(
 			(schema: iShadow.Schema) => {
 				const newModel = this.db.model(schema.name, schema.schema, schema.collection)
 
 				this.dbModels[schema.name] = newModel
-			}, this
+			}
 		)
 	}
 
 	private InitErrorHandler() {
-		this.app.use((err: any | Error, _req: any, res: any, _next: NextFunction) => {
+		this.app.use((err: any | Error, _: any, res: any) => {
 			if(!res.headersSent){
 				res.status(500)
 				res.render('error', { error: err })
@@ -191,7 +186,8 @@ export default class Shadow {
 		})
 	}
 
-	private CreateServer(port: number, host: string) {
+	@TryChatch()
+	CreateServer(port: number, host: string) {
 		this.app.listen(port, () => {
 			console.info('\x1b[32m%s\x1b[0m', ` Listening at ${host}:${port}`)
 		})
@@ -211,6 +207,7 @@ export default class Shadow {
 		console.info("\x1b[36m%s\x1b[0m"," Ready for Action 👊")	
 	}
 
+	@TryChatch()
 	GetFromCache(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
 		const modelCache: any[] = this.data[modelName]
 		if(modelCache) {
@@ -244,6 +241,7 @@ export default class Shadow {
 	}
 
 	// DataBase Methods
+	@TryChatch()
 	async GetFromDB(modelName: string, conditions: iShadow.LooseObject = {}, limit = Number.MAX_SAFE_INTEGER) {
 		// Check in chache
 		const fromCache = this.GetFromCache(modelName, conditions, limit)
@@ -274,6 +272,7 @@ export default class Shadow {
 		}
 	}
 
+	@TryChatch()
 	async AddToDB<ModelSchema>(
 		modelName: string,
 		modelArguments: ModelSchema
@@ -293,6 +292,7 @@ export default class Shadow {
 		return response
 	}
 
+	@TryChatch()
 	async UpdateDB(
 		modelName: string, 
 		query: iShadow.LooseObject, 
@@ -307,6 +307,7 @@ export default class Shadow {
 		return output
 	}
 
+	@TryChatch()
 	async DeleteFromDB(
 		modelName: string, 
 		query: iShadow.LooseObject, 
@@ -325,6 +326,7 @@ export default class Shadow {
 		return output
 	}
 
+	@TryChatch()
 	async AddProp<T>(modelName: string, propName: string, value: T) {
 		let out: any
 		await this.dbModels[modelName]
@@ -344,6 +346,7 @@ export default class Shadow {
 	 * @description Fetches data from the database and saves to ```this.data```
 	 * @returns void
 	 */
+	@TryChatch()
 	async UpdateData(...modelNames: string[]) {
 		if(modelNames.length > 0) {
 			await	modelNames.forEach(async (modelName: string) => {
@@ -397,6 +400,8 @@ export default class Shadow {
 	 * @param {T | T[]} input
 	 * @param {String} modelName 
 	 */
+	// @Timer("Rosolve")
+	@TryChatch()
 	async Resolve<T extends mongoose.Document>(
 		input: T | T[], 
 		modelName: string

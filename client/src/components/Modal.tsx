@@ -8,7 +8,7 @@ interface S {
 	sy: number
 }
 
-export default class Modal extends PureComponent<P, S> {
+export default class Modal extends PureComponent<P, S> implements S {
 	sy: number
 	constructor(props: any) {
 		super(props)
@@ -24,8 +24,7 @@ export default class Modal extends PureComponent<P, S> {
 	}
 
 	handleTouchEnd(e: any) {
-    console.log(e.changedTouches[0].screenY - this.state.sy)
-    if (e.changedTouches[0].screenY - this.state.sy <= window.innerHeight * -0.8) {
+    if (e.changedTouches[0].screenY - this.state.sy <= window.innerHeight * -0.7) {
 			this.props.onClick({})
 		}
 	}

@@ -1,5 +1,13 @@
+@import "./_breakpoints.pcss";
+
 :root {
 	--scrollbar-w: 8px;
+}
+
+@include phone {
+	:root {
+		--scrollbar-w: 0;
+	}
 }
 
 @mixin Scrollbar {
