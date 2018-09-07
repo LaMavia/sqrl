@@ -14,7 +14,7 @@
     "dev:no-server": "concurrently -p name -k \"npm run db\" \"npm run webpack\" \"npm run postcss\" ",
     "build": "webpack --config ./webpack.prod.js && npm run postcss:build",
     "prod:test-site": "concurrently \"npm run db\" \"npm run server\" ",
-    "tsc": "tsc ./server/app.ts -t ES2015 --experimentalDecorators -m commonjs",
+    "tsc": "tsc ./server/app.ts -t ES6 --experimentalDecorators -m commonjs",
     "postinstall": "npm run tsc"
   },
   "repository": {
