@@ -7,7 +7,7 @@ import ReactSVG from 'react-svg';
 import { Post } from '../dtos/post.dto';
 import { closeModal } from '../actions/modal.actions';
 import { addComment } from '../actions/comments.actions';
-import { connectComponent } from '../decorators/redux';
+import { myConnect } from '../decorators/redux';
 
 const mstp = (state: State) => ({
   user: state.user.me,
@@ -26,7 +26,8 @@ interface P {
   addComment: (Content: string, Author: string, Post: string) => any
 } 
 
-@connectComponent(mstp, mdtp)
+@myConnect(mstp, mdtp)
+// @mapDispatchToProps(mdtp)
 export default class ConnectedAdd extends PureComponent<P> {
 
   constructor(props: any) {

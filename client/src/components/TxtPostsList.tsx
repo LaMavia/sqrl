@@ -1,13 +1,14 @@
 import React from "react"
-import { connect } from "react-redux"
 import { User } from "../dtos/user.dto"
 import PostBtns from "./PostBtns";
 import UserAndDate from "./UserAndDate";
 import { mdtp, makeMSTP } from "../mappers/postList.mapper";
 import { P } from "../interfaces/postsList";
+import { connect } from "react-redux";
 
+const mstp = makeMSTP(false)
 
-class connectedTxtPosts extends React.PureComponent<P, {}> {
+export class connectedTxtPosts extends React.PureComponent<P, {}> {
 	constructor(props: P) {
 		super(props)
 	}
@@ -49,7 +50,4 @@ class connectedTxtPosts extends React.PureComponent<P, {}> {
 	}
 }
 
-const mstp = makeMSTP(false)
-
-// @ts-ignore
 export default connect(mstp, mdtp)(connectedTxtPosts)

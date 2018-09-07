@@ -4,11 +4,11 @@ import PostBtns from "./PostBtns";
 import UserAndDate from "./UserAndDate";
 import { mdtp, makeMSTP } from "../mappers/postList.mapper";
 import { P } from "../interfaces/postsList";
-import { connectComponent } from "../decorators/redux";
+import { connect } from "react-redux";
 
 const mstp = makeMSTP(true)
-@connectComponent(mstp, mdtp)
-export default class connectedImgPosts extends React.PureComponent<P> {
+
+export class connectedImgPosts extends React.PureComponent<P> {
 	componentDidMount() {
 		this.props.authors.forEach(({ _id }) => 
 			_id&&this.props.getPosts(`${location.origin}/graphql`, `Author: "${_id}"`),
@@ -51,3 +51,5 @@ export default class connectedImgPosts extends React.PureComponent<P> {
 		)
 	}
 }
+
+export default connect(mstp, mdtp)(connectedImgPosts)

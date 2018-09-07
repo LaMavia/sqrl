@@ -49,14 +49,14 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
       )
 
       if(res) {
-        let Image = null
+        // let Image = null
         const Author = await Shadow.Resolve(res.Author, "User")
         if(res.Image) {
-          Image = await Shadow.Resolve(res.Image, "Image")
+          // Image = await Shadow.Resolve(res.Image, "Image")
         }
         const out = Object.assign(
           {}, res._doc,
-          { Author, Image }
+          { Author, Image: `/img?id=${String(res.Image)}` }
         )
         return prepare(out) || null
       }
@@ -69,15 +69,15 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
       if(res) {
         const out = []
         for(const post of res) {
-          let Image = null
+          let Image = post.Image&&`/img?id=${String(post.Image)}`
           const Author = await Shadow.Resolve(post.Author, "User")
-          if(post.Image) {
-            Image = (await Shadow.Resolve(post.Image, "Image"))
-          }
+          // if(post.Image) {
+          //   Image = (await Shadow.Resolve(post.Image, "Image"))
+          // }
           
           out.push(Object.assign(
             {}, post._doc || post,
-            { Author, Image: Image ? Image.Img : null }
+            { Author, Image: Image || "" } // Image ? Image.Img : null
           ))
         }
         return out.map(prepare)
@@ -88,12 +88,6 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
   Mutation: {
     postAdd: async (_root, { Author, Content, ImageID }: { Author: string, Content: string, ImageID: string }) => {
-      /**
-       * Ideas on how to fix the Base64 bug:
-       * Use apollo FileUpload mutation
-       * Use separate api for sending images and store them in the separate collection
-       * Idk...
-       */
 
       const res = await Shadow.AddToDB("Post", {
         Author: mongoose.Types.ObjectId(Author),

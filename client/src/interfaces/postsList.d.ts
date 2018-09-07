@@ -14,3 +14,7 @@ export interface P {
 	openPost: (_id: string) => any 
 	filter?: PostsFilter
 }
+
+export interface OwnProps {
+	filter?: PostsFilter
+}
