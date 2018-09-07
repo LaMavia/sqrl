@@ -14,7 +14,7 @@
     "dev:no-server": "concurrently -p name -k \"npm run db\" \"npm run webpack\" \"npm run postcss\" ",
     "build": "webpack --config ./webpack.prod.js && npm run postcss:build",
     "prod:test-site": "concurrently \"npm run db\" \"npm run server\" ",
-    "tsc": "tsc --target ES6 ./server/app.ts --experimentalDecorators true",
+    "tsc": "tsc --target ES6 ./server/app.ts --experimentalDecorators true --lib [\"esnext.asynciterable\", \"dom\", \"es2015\", \"esnext\"]",
     "postinstall": "npm run tsc"
   },
   "repository": {
