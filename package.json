@@ -14,7 +14,7 @@
     "dev:no-server": "concurrently -p name -k \"npm run db\" \"npm run webpack\" \"npm run postcss\" ",
     "build": "webpack --config ./webpack.prod.js && npm run postcss:build",
     "prod:test-site": "concurrently \"npm run db\" \"npm run server\" ",
-    "tsc": "tsc",
+    "tsc": "tsc --taregt ES6 ./server/app.ts",
     "postinstall": "npm run tsc"
   },
   "repository": {
@@ -114,7 +114,7 @@
     "request-promise-native": "^1.0.5",
     "sharp": "^0.20.5",
     "zlib": "^1.0.5",
-    "tsc": "2.9.2"
+    "tsc": "latest"
   },
   "jest": {
     "transform": {
