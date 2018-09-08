@@ -19,7 +19,7 @@
     "build": "webpack --config ./webpack.prod.js && tsc -p ./tsconfig.server.json && npm run postcss:build",
     "prod:test-site": "concurrently \"npm run db\" \"npm start\" ",
     "start": "node ./server/app",
-    "postinstall": "tsc -p ./tsconfig.server.json"
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
