@@ -9,14 +9,16 @@ import Modal from "./Modal";
 import ImgPost from "./ImgPost";
 import { Post } from "../types";
 import TxtPost from "./TxtPost";
+import { PostsFilter } from "../interfaces/postsList";
 
 interface P {
   isOpen: boolean
   closePost: () => any
   currentPost: Post | null
+  filter?: PostsFilter
 }
 
-const ConnectedPosts = ({ isOpen, closePost, currentPost }: P) => (
+const ConnectedPosts = ({ isOpen, closePost, currentPost, filter }: P) => (
   <section className="posts">
     {
       (() => {
@@ -31,8 +33,8 @@ const ConnectedPosts = ({ isOpen, closePost, currentPost }: P) => (
         }
       })()
     }
-    <TxtPostsList />
-    <ImgPostsList />
+    <ImgPostsList filter={filter}/>
+    <TxtPostsList filter={filter}/>
   </section>
 )
 
@@ -47,4 +49,4 @@ const mdtp = (dispatch: Dispatch) => ({
   }
 })
 // @ts-ignore
-export const Posts = connect(mstp, mdtp)(ConnectedPosts)     
+export const Posts = connect(mstp, mdtp)(ConnectedPosts)   

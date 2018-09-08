@@ -8,6 +8,7 @@ export const USER_LOADING	= "USER_LOADING"
 export const USER_ERRORED = "USER_ERRORED"
 export const USER_LOADED = "USER_LOADED"
 export const USER_UNLOADED = "USER_UNLOADED"
+export const USER_PROFILED_LOADED = "USER_PROFILED_LOADED"
 
 export const userLogin = (username: string, password: string) => ({
 	type: USER_LOGIN,
@@ -35,6 +36,11 @@ export const userLoaded = (user: User) => ({
 export const userUnloaded = () => ({
 	type: USER_UNLOADED
 })
+
+export const userProfiledLoaded = (user: User) => ({
+	type: USER_PROFILED_LOADED,
+	user
+})
 // Functions ----------------------------------------------------------------
 
 export const getUser = (apiURL: string, conditions: string) =>
@@ -59,9 +65,41 @@ export const getUser = (apiURL: string, conditions: string) =>
 				.then(res => res.json())
 				.then(({data}) => dispatch(userLoaded(data.User)))
 				.catch(err => dispatch(userErrored(new Error(err))))
-				.finally(() => dispatch(userIsLoading(false)))
+				// .finally(() => dispatch(userIsLoading(false)))
+				dispatch(userIsLoading(false))
 
 		}
+
+export const getUserProfile = (Username: string) =>
+	[Username].some(x => typeof x === "undefined")
+	// @ts-ignore because of "this" binding
+	? getUser.bind(this, ...[Username])
+	: (dispatch: Dispatch) => {
+		debugger
+
+		sendQuery(`
+			query {
+
+				User(Username: "${Username}") {
+					_id
+					Name
+					Username
+					ProfileImageURL
+					BackgroundImageURL
+					Email
+				}
+
+			}
+		`)
+			.then(res => res.json())
+			.then((r) => {
+				if(!(r.data && r.data.User)) throw `Failed fetching user's profile: ${JSON.stringify(r.errors, null, 2)}`
+
+				dispatch(userProfiledLoaded(r.data.User))
+			})
+			.catch(err => dispatch(userErrored(new Error(err))))
+
+	}
 
 export const loginUser = (apiURL: string, username: string, password: string) =>
 [apiURL, username, password].some(x => typeof x === "undefined")
@@ -103,7 +141,8 @@ export const loginUser = (apiURL: string, username: string, password: string) =>
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const loginWithID = (apiURL: string, _id: string) =>
@@ -147,7 +186,8 @@ export const loginWithID = (apiURL: string, _id: string) =>
 				document.cookie = `UserID=${String(_id)}; expires=${d.toUTCString()}`
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const logoutUser = (dispatch: Dispatch) => {
@@ -206,7 +246,8 @@ export const registerUser = (apiURL: string, Username: string, Password: string,
 				}	
 			})
 			.catch(err => dispatch(userErrored(err)))
-			.finally(() => dispatch(userIsLoading(false)))
+			// .finally(() => dispatch(userIsLoading(false)))
+			dispatch(userIsLoading(false))
 	}
 
 export const setError = 

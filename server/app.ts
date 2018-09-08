@@ -17,6 +17,7 @@ import { ActiveRoute } from "./routes/active"
 import { LogoutRoute } from "./routes/logout"
 
 import { ImgPostRoute } from "./api/img.post"
+import { ImgGetRoute } from "./api/img.get"
 
 setupDb()
 export const app = new ShadowMS(
@@ -42,9 +43,9 @@ export const app = new ShadowMS(
 	/**
 	 * Keep IndexRoute as the last route, because it's a catch-all to help with react-router.
 	 */
-	[ActiveRoute, LogoutRoute, IndexRoute],
-	[ ImgPostRoute ],
+	[ ActiveRoute, LogoutRoute, IndexRoute ],
+	[ ImgPostRoute, ImgGetRoute ],
 	(err: any) => console.dir(new Error(err), { colors: true }),
-	[CommentSchema, UserSchema, PostSchema], 
-	[CommentResolver, UserResolver, PostResolver]
+	[ CommentSchema, UserSchema, PostSchema ],
+	[ CommentResolver, UserResolver, PostResolver ]
 )

@@ -1,5 +1,6 @@
 import React from 'react'
 import { User } from '../dtos/user.dto';
+import { Link } from "react-router-dom"
 
 interface P {
   user: User
@@ -14,7 +15,7 @@ export default ({ user, date, className }: P) => (
 			alt=""
 			className="und__img"
 		/>
-		<p className="und__user">{user.Name}</p>
+		<Link to={`/user/${user.Username}`} className="und__user">{user.Name}</Link>
 		<p className="und__date">
 			{`${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}.${
 				date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth()

@@ -1,7 +1,6 @@
 import React, { PureComponent, FormEvent, ChangeEvent } from 'react'
 import { User } from '../dtos/user.dto';
 import Modal from './Modal';
-import { connect } from 'react-redux';
 import { State } from '../store';
 import { Dispatch } from 'redux';
 import ReactSVG from 'react-svg';
@@ -9,6 +8,19 @@ import { PostCacheInput, cacheUpdate, cacheFlush } from '../actions/postCache.ac
 import { addPost } from "../actions/post.actions"
 import { PostCacheState } from '../reducers/postCache.reducer';
 import { closeModal } from '../actions/modal.actions';
+import { connectComponent } from '../decorators/redux';
+
+const mstp = (state: State) => ({
+  user: state.user.me,
+  post: state.postCache
+})
+
+const mdtp = (dispatch: Dispatch) => ({
+  hide: () => closeModal("AddPost")(dispatch),
+  updateCache: (input: PostCacheInput) => dispatch(cacheUpdate(input)),
+  flushCache: () => dispatch(cacheFlush()),
+  addPost: (Content: string, ImageID: string, Author: string) => addPost({Content, ImageID}, Author)(dispatch)
+})
 
 interface P {
   user: User
@@ -19,7 +31,8 @@ interface P {
   addPost: (Content: string, ImageURL: string | null, Author: string) => any
 } 
 
-export class ConnectedAdd extends PureComponent<P> {
+@connectComponent(mstp, mdtp)
+export default class AddPost extends PureComponent<P> {
 
   addPost(e: FormEvent) {
     e.preventDefault()
@@ -115,18 +128,3 @@ export class ConnectedAdd extends PureComponent<P> {
     )
   }
 }
-
-const mstp = (state: State) => ({
-  user: state.user.me,
-  post: state.postCache
-})
-
-const mdtp = (dispatch: Dispatch) => ({
-  hide: () => closeModal("AddPost")(dispatch),
-  updateCache: (input: PostCacheInput) => dispatch(cacheUpdate(input)),
-  flushCache: () => dispatch(cacheFlush()),
-  addPost: (Content: string, ImageID: string, Author: string) => addPost({Content, ImageID}, Author)(dispatch)
-})
-
-// @ts-ignore
-export default connect(mstp, mdtp)(ConnectedAdd)

@@ -70,15 +70,12 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 			})
 			if (res) {
 				const comment = extract(res)
-				const author = await Shadow.GetFromDB('User', {
-					_id: String(comment.Author),
-				})
-				const post = await Shadow.GetFromDB('Post', {
-					_id: String(comment.Post),
-				})
+				
+				const author = await Shadow.Resolve(comment.Author, "User")
+				const post = await Shadow.Resolve(comment.Post, "Post")
 				Object.assign(comment._doc, {
-					Author: extract(author),
-					Post: extract(post),
+					Author: author,
+					Post: post,
 				})
 
 				return res
@@ -116,13 +113,11 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 			if (args._id) args._id = String(args._id)
 			const res = await Shadow.GetFromDB('Comment', args, 1)
 			const comment = extract(res)
-			const author = await Shadow.GetFromDB('User', {
-				_id: String(comment.Author),
-			})
-			const post = await Shadow.GetFromDB('Post', { _id: String(comment.Post) })
+			const author = await Shadow.Resolve(comment.Author, "User")
+			const post = await Shadow.Resolve(comment.Post, "Post")
 			Object.assign(comment._doc, {
-				Author: extract(author),
-				Post: extract(post),
+				Author: author,
+				Post: post,
 			})
 
 			return prepare(comment)
@@ -131,15 +126,11 @@ export const CommentResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 			const res = await Shadow.GetFromDB('Comment', args)
 			const out = []
 			for (const comment of res) {
-				const author = await Shadow.GetFromDB('User', {
-					_id: String(comment.Author),
-				})
-				const post = await Shadow.GetFromDB('Post', {
-					_id: String(comment.Post),
-				})
+				const author = await Shadow.Resolve(comment.Author, 'User')
+				const post = await Shadow.Resolve(comment.Post, 'Post')
 				const toOut = Object.assign({}, comment._doc, {
-					Author: extract(author),
-					Post: extract(post),
+					Author: author,
+					Post: post,
 				})
 				out.push(toOut)
 			}

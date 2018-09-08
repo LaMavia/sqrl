@@ -49,18 +49,14 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
       )
 
       if(res) {
-        let Image = null
-        const Author = extract(
-          await Shadow.GetFromDB("User", {_id: String(res.Author)}, 1)
-        ) 
+        // let Image = null
+        const Author = await Shadow.Resolve(res.Author, "User")
         if(res.Image) {
-          Image = extract(
-            await Shadow.GetFromDB("Image", { _id: String(res.Image) }, 1)
-          )
+          // Image = await Shadow.Resolve(res.Image, "Image")
         }
         const out = Object.assign(
           {}, res._doc,
-          { Author, Image }
+          { Author, Image: `/img?id=${String(res.Image)}` }
         )
         return prepare(out) || null
       }
@@ -73,19 +69,15 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
       if(res) {
         const out = []
         for(const post of res) {
-          let Image = null
-          const Author = prepare(extract(
-            await Shadow.GetFromDB("User", {_id: String(post.Author)}, 1)
-          ))
-          if(post.Image) {
-            Image = prepare(extract(
-              await Shadow.GetFromDB("Image", { _id: String(post.Image) }, 1)
-            )).Img
-          }
+          let Image = post.Image&&`/img?id=${String(post.Image)}`
+          const Author = await Shadow.Resolve(post.Author, "User")
+          // if(post.Image) {
+          //   Image = (await Shadow.Resolve(post.Image, "Image"))
+          // }
           
           out.push(Object.assign(
             {}, post._doc || post,
-            { Author, Image }
+            { Author, Image: Image || "" } // Image ? Image.Img : null
           ))
         }
         return out.map(prepare)
@@ -96,12 +88,6 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
   Mutation: {
     postAdd: async (_root, { Author, Content, ImageID }: { Author: string, Content: string, ImageID: string }) => {
-      /**
-       * Ideas on how to fix the Base64 bug:
-       * Use apollo FileUpload mutation
-       * Use separate api for sending images and store them in the separate collection
-       * Idk...
-       */
 
       const res = await Shadow.AddToDB("Post", {
         Author: mongoose.Types.ObjectId(Author),
@@ -114,14 +100,14 @@ export const PostResolver: iShadow.ResolverConstruct<any, any> = Shadow => ({
 
       if(res) {
         let image = null
-        const author: User | undefined = extract(await Shadow.GetFromDB("User", { _id: Author }, 1)) 
+        const author: User | undefined = await Shadow.Resolve(Author as any, "User")
         if(ImageID) {
-          image = extract(await Shadow.GetFromDB("Image", { _id: ImageID }, 1))
+          image = (await Shadow.Resolve(ImageID as any, "Image"))
         }
 
         const out = Object.assign({}, res._doc, { 
-          Author: prepare(author),
-          Image: image ? prepare(image).Img : null
+          Author: author,
+          Image: image ? image.Img : null
         })
 
         return out

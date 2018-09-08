@@ -1,4 +1,5 @@
 @import './_breakpoints.pcss';
+@import './_mixins.pcss';
 
 :root {
 	--post-h: 60vh;
@@ -19,6 +20,9 @@
 	overflow: hidden;
 	margin: 15px 0 6px 0;
 	white-space: pre-line;
+	@include phone {
+		height: auto;
+	}
 }
 
 .post {
@@ -33,6 +37,14 @@
 	overflow: hidden;
 	background-color: #f5f5f5;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+	@include phone {
+		width: 100vw;
+		height: 100vh;
+		overflow-y: auto;
+		flex-flow: column;
+		@include Scrollbar;
+	}
 
 	&--txt {
 		--post-aside-w: 20rem;
@@ -65,11 +77,16 @@
 	&__img {
 		height: 100%;
 		width: auto;
+		@include phone {
+			height: auto;
+			width: 100vw;
+		}
 	}
 
 	&__body {
 		@include body;
 		width: var(--post-body-w);
+		height: auto;
 	}
 
 	&__header {
@@ -98,10 +115,14 @@
 		}
 
 		&__comments {
-			padding: 20px;
+			--p: 20px;
+			padding: var(--p) var(--p) calc(var(--p) * 2) var(--p);
 			width: 100%;
-			height: auto;
+			height: 100%;
+			overflow-y: auto;
 			list-style: none;
+
+			@include Scrollbar;
 
 			&__item {
 				height: auto;	
@@ -113,7 +134,7 @@
 					margin-right: 6px;
 					grid-template-columns: 1fr var(--und-img-s) !important;
 					grid-template-areas:
-						'author img'
+						'user img'
 						'date img' !important;
 					text-align: right !important;
 				}

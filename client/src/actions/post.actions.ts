@@ -105,7 +105,8 @@ export const getPosts = (apiURL: string, conditions: string) =>
 				.then(res => res.json())
 				.then(posts => dispatch(postsLoaded(posts.data.Posts)))
 				.catch(err => dispatch(postsErrored(new Error(err))))
-        .finally(() => dispatch(postsAreLoading(false)))
+        // .finally(() => dispatch(postsAreLoading(false)))
+        dispatch(postsAreLoading(false))
         
   }
 
@@ -190,7 +191,8 @@ export const loadPost = (_id: string, posts: Post[] = []) => (dispatch: Dispatch
       getComments(`Post: "${String(post._id)}"`)(dispatch)
     })
     .catch(err => dispatch(postErrored(err)))
-    .finally(() => dispatch(postIsLoading(false)))
+    // .finally(() => dispatch(postIsLoading(false)))
+    dispatch(postIsLoading(false))
 
   return post
 }
