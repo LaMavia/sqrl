@@ -12,7 +12,7 @@
     "postcss:build": "postcss ./client/src/styles/index.pcss -o ./client/assets/css/styles.css --env production",
     "dev": "concurrently -p name --kill-others \"npm run db\" \"npm run server\" \"npm run webpack\" \"npm run postcss\" ",
     "dev:no-server": "concurrently -p name -k \"npm run db\" \"npm run webpack\" \"npm run postcss\" ",
-    "build": "webpack --config ./webpack.prod.js && npm run postcss:build",
+    "build": "webpack --config ./webpack.prod.js && tsc && npm run postcss:build",
     "prod:test-site": "concurrently \"npm run db\" \"npm run server\" "
   },
   "repository": {
